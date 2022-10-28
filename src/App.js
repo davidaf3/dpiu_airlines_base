@@ -1,6 +1,12 @@
 import React from 'react';
 import { createClient } from '@supabase/supabase-js'
 
+import LoginForm from './LoginForm';
+import { Route, Routes, Link, Navigate } from "react-router-dom"
+
+import FlightDetails from './Components/FlightDetails';
+import withRouter from './Components/withRouter';
+
 class App extends React.Component {
 
   constructor(props) {
@@ -45,11 +51,24 @@ class App extends React.Component {
 
   render() {
     return (
-      <h1>Airplanes con supabase</h1>
+      <div className = "App">
+        <h1>Airplanes con supabase</h1>
+        <Routes>
+            <Route path="/" element={ 
+              <LoginForm callBackOnFinishLoginForm  = { this.callBackOnFinishLoginForm } /> 
+              } />
+
+            <Route path="/flights/:code" element={ 
+              <FlightDetails supabase = {this.supabase}/> 
+            } />
+
+        </Routes>
+      </div>
     );
   }
 }
-export default App;
+export default withRouter(App);
+
 
 
 
