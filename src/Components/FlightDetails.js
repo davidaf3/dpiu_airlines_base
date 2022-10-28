@@ -10,7 +10,8 @@ class FlightDetails extends React.Component {
             flight : {},
             origin : {},
             destination: {},
-            plane: {}
+            plane: {},
+            tickets: {}
           }
           this.getFlightDetails();
 
@@ -74,6 +75,48 @@ class FlightDetails extends React.Component {
           }) 
         }
       }
+
+      getFlightTickets = async () => {
+        const { data, error } = await this.props.supabase
+          .from('ticket')
+          .select()
+          .eq('flight_code', this.state.flight.code )
+  
+        if ( error == null && data.length > 0){
+          // Data is a list
+          this.setState({
+            tickets : data
+          }) 
+        }
+      }
+
+      createRowSeat = () => {
+        console.log(this.state.plane.columns)
+        const array = []
+        const half_length = this.state.plane.columns/2;
+    
+        for(var i = 1; i <= this.state.plane.columns; i++){
+          array.push(<button>{i}</button>)
+          if (i == half_length) {
+            array.push(<button></button>)
+          }
+        }
+        array.push(<br></br>)
+
+    
+        return array
+      }
+
+      createSeats = () => {
+        const array = []
+        console.log(this.state.plane.rows)
+
+        for(var i = 1; i <= this.state.plane.rows; i++){
+          array.push(this.createRowSeat());
+        }
+
+        return array
+      }
   
 
     render() { 
@@ -82,6 +125,7 @@ class FlightDetails extends React.Component {
             <h2> code: { this.state.flight.code } </h2>
             <h2> departure: { this.state.flight.departure } </h2>
             <h2> modelo: { this.state.plane.name } </h2>
+            {this.createSeats()}
         </div>
       )
     }
