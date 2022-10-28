@@ -6,8 +6,8 @@ import { Route, Routes, Link, Navigate } from "react-router-dom";
 
 import FlightDetails from "./Components/FlightDetails";
 import withRouter from "./Components/withRouter";
-import SearchFlight from "./Components/SearchFlight";
 import TicketBuyPassengers from "./Components/TicketBuyPassengers";
+import Home from "./Components/Home";
 
 class App extends React.Component {
   constructor(props) {
@@ -54,7 +54,7 @@ class App extends React.Component {
         <h1>Airplanes con supabase</h1>
         <Routes>
           <Route
-            path="/"
+            path="/login"
             element={
               <LoginForm
                 callBackOnFinishLoginForm={this.callBackOnFinishLoginForm}
@@ -63,8 +63,8 @@ class App extends React.Component {
           />
 
           <Route
-            path="/flights/search"
-            element={<SearchFlight supabase={this.supabase} />}
+            path="/"
+            element={<Home supabase={this.supabase} />}
           />
 
           <Route

@@ -15,7 +15,7 @@ import moment from "moment";
 const excludeAirport = (airportList, code) =>
   airportList.filter((airport) => airport.code !== code);
 
-export default function SearchFlight({ supabase, values }) {
+export default function SearchFlight({ supabase, values, onSearch }) {
   const [airports, setAirports] = useState([]);
   const [origins, setOrigins] = useState([]);
   const [destinations, setDestinations] = useState([]);
@@ -43,10 +43,6 @@ export default function SearchFlight({ supabase, values }) {
     setOrigins(excludeAirport(airports, values.destination));
   }, [airports, values]);
 
-  const searchFlights = (filters) => {
-    console.log(filters);
-  };
-
   const swapOriginDestination = () => {
     setDestinations(origins);
     setOrigins(destinations);
@@ -71,7 +67,7 @@ export default function SearchFlight({ supabase, values }) {
   return (
     <Form
       ref={formRef}
-      onFinish={searchFlights}
+      onFinish={onSearch}
       name="searchFlight"
       layout="vertical"
       initialValues={values ?? { passengers: 1, roundTrip }}
