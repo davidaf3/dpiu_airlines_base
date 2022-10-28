@@ -171,11 +171,11 @@ export default function SearchFlight({ supabase, values, onSearch }) {
               name="dates"
               label="Fechas"
               rules={[
+                { required: true, message: "" },
                 {
-                  validator: (_, value) => {
-                    if (value.some((date) => date === undefined))
-                      return new Promise((_, reject) => reject());
-                    return new Promise((resolve) => resolve());
+                  validator: async (_, value) => {
+                    if (!value || value.some((date) => date === undefined))
+                      throw new Error();
                   },
                   message: "Selecciona las fechas de ida y vuelta",
                 },
