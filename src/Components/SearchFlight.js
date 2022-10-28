@@ -1,6 +1,5 @@
 import {
   Form,
-  Select,
   Row,
   Button,
   InputNumber,
@@ -9,6 +8,7 @@ import {
   Radio,
 } from "antd";
 import { SearchOutlined, SwapOutlined } from "@ant-design/icons";
+import AirportSelect from "./AirportSelect";
 import { useEffect, useRef, useState } from "react";
 import moment from "moment";
 
@@ -26,7 +26,7 @@ export default function SearchFlight({ supabase, values, onSearch }) {
   useEffect(() => {
     supabase
       .from("airport")
-      .select("code, name")
+      .select("code, name, country")
       .then(({ data }) => {
         setAirports(data);
       });
@@ -69,13 +69,6 @@ export default function SearchFlight({ supabase, values, onSearch }) {
     formRef.current.setFieldValue("origin", destination);
   };
 
-  const filterAirportOptions = (input, option) => {
-    const inputLower = input.toLowerCase();
-    return option.children.some((child) =>
-      child.toLowerCase().includes(inputLower)
-    );
-  };
-
   const onAirportChange = (setter) => (code) =>
     setter(excludeAirport(airports, code));
 
@@ -109,21 +102,11 @@ export default function SearchFlight({ supabase, values, onSearch }) {
               },
             ]}
           >
-            <Select
-              showSearch
-              optionFilterProp="children"
-              filterOption={filterAirportOptions}
+            <AirportSelect
+              key="origin"
+              airports={origins}
               onChange={onAirportChange(setDestinations)}
-            >
-              {origins.map((airport) => (
-                <Select.Option
-                  key={`origin${airport.code}`}
-                  value={airport.code}
-                >
-                  {airport.code} - {airport.name}
-                </Select.Option>
-              ))}
-            </Select>
+            />
           </Form.Item>
         </Col>
         <Col span={1}>
@@ -148,21 +131,11 @@ export default function SearchFlight({ supabase, values, onSearch }) {
               },
             ]}
           >
-            <Select
-              showSearch
-              optionFilterProp="children"
-              filterOption={filterAirportOptions}
+            <AirportSelect
+              key="destination"
+              airports={destinations}
               onChange={onAirportChange(setOrigins)}
-            >
-              {destinations.map((airport) => (
-                <Select.Option
-                  key={`origin${airport.code}`}
-                  value={airport.code}
-                >
-                  {airport.code} - {airport.name}
-                </Select.Option>
-              ))}
-            </Select>
+            />
           </Form.Item>
         </Col>
         <Col span={8}>
