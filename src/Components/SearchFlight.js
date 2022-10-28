@@ -43,6 +43,23 @@ export default function SearchFlight({ supabase, values, onSearch }) {
     setOrigins(excludeAirport(airports, values.destination));
   }, [airports, values]);
 
+  useEffect(() => {
+    let [departureDate, returnDate] = formRef.current.getFieldValue(
+      "dates"
+    ) ?? [undefined, undefined];
+
+    if (roundTrip) {
+      departureDate = formRef.current.getFieldValue("date");
+      returnDate =
+        departureDate && departureDate.isSameOrBefore(returnDate)
+          ? returnDate
+          : undefined;
+      formRef.current.setFieldValue("dates", [departureDate, returnDate]);
+    } else {
+      formRef.current.setFieldValue("date", departureDate);
+    }
+  }, [roundTrip]);
+
   const swapOriginDestination = () => {
     setDestinations(origins);
     setOrigins(destinations);
@@ -82,7 +99,16 @@ export default function SearchFlight({ supabase, values, onSearch }) {
       </Row>
       <Row align="bottom">
         <Col span={5}>
-          <Form.Item name="origin" label="Origen">
+          <Form.Item
+            name="origin"
+            label="Origen"
+            rules={[
+              {
+                required: true,
+                message: "Introduce un aeropuerto de origen",
+              },
+            ]}
+          >
             <Select
               showSearch
               optionFilterProp="children"
@@ -104,6 +130,7 @@ export default function SearchFlight({ supabase, values, onSearch }) {
           <Form.Item>
             <Button
               type="secondary"
+              title="Intercambiar origen y destino"
               icon={<SwapOutlined />}
               style={{ width: "100%" }}
               onClick={swapOriginDestination}
@@ -111,7 +138,16 @@ export default function SearchFlight({ supabase, values, onSearch }) {
           </Form.Item>
         </Col>
         <Col span={5}>
-          <Form.Item name="destination" label="Destino">
+          <Form.Item
+            name="destination"
+            label="Destino"
+            rules={[
+              {
+                required: true,
+                message: "Introduce un aeropuerto de destino",
+              },
+            ]}
+          >
             <Select
               showSearch
               optionFilterProp="children"
@@ -131,15 +167,42 @@ export default function SearchFlight({ supabase, values, onSearch }) {
         </Col>
         <Col span={8}>
           {roundTrip ? (
-            <Form.Item name="dates" label="Fechas">
+            <Form.Item
+              name="dates"
+              label="Fechas"
+              rules={[
+                {
+                  validator: (_, value) => {
+                    if (value.some((date) => date === undefined))
+                      return new Promise((_, reject) => reject());
+                    return new Promise((resolve) => resolve());
+                  },
+                  message: "Selecciona las fechas de ida y vuelta",
+                },
+              ]}
+            >
               <DatePicker.RangePicker
+                placeholder={[
+                  "Selecciona la fecha de ida",
+                  "Selecciona la fecha de vuelta",
+                ]}
                 style={{ width: "100%" }}
                 disabledDate={disabledDate}
               ></DatePicker.RangePicker>
             </Form.Item>
           ) : (
-            <Form.Item name="date" label="Fecha">
+            <Form.Item
+              name="date"
+              label="Fecha"
+              rules={[
+                {
+                  required: true,
+                  message: "Selecciona la fecha de salida",
+                },
+              ]}
+            >
               <DatePicker
+                placeholder={"Selecciona la fecha de salida"}
                 style={{ width: "100%" }}
                 disabledDate={disabledDate}
               ></DatePicker>
@@ -147,7 +210,16 @@ export default function SearchFlight({ supabase, values, onSearch }) {
           )}
         </Col>
         <Col span={4}>
-          <Form.Item name="passengers" label="Nº de pasajeros">
+          <Form.Item
+            name="passengers"
+            label="Nº de pasajeros"
+            rules={[
+              {
+                required: true,
+                message: "Introduce el número de pasajeros",
+              },
+            ]}
+          >
             <InputNumber min={1} style={{ width: "100%" }}></InputNumber>
           </Form.Item>
         </Col>
@@ -156,6 +228,7 @@ export default function SearchFlight({ supabase, values, onSearch }) {
             <Button
               type="primary"
               htmlType="submit"
+              title="Buscar"
               icon={<SearchOutlined />}
               style={{ width: "100%" }}
             ></Button>
