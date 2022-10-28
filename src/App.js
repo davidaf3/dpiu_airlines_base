@@ -6,6 +6,7 @@ import { Route, Routes, Link, Navigate } from "react-router-dom"
 
 import FlightDetails from './Components/FlightDetails';
 import withRouter from './Components/withRouter';
+import TicketBuyPassengers from './Components/TicketBuyPassengers';
 
 class App extends React.Component {
 
@@ -60,6 +61,10 @@ class App extends React.Component {
 
             <Route path="/flights/:code" element={ 
               <FlightDetails supabase = {this.supabase}/> 
+            } />
+
+              <Route path="/flights/buy_ticket/:code" element={ 
+              <TicketBuyPassengers supabase = {this.supabase}/> 
             } />
 
         </Routes>
