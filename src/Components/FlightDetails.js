@@ -1,5 +1,6 @@
 import React from 'react';
 import withRouter from './withRouter';
+import { Badge, Descriptions, Button } from 'antd';
 
 class FlightDetails extends React.Component {
 
@@ -11,6 +12,7 @@ class FlightDetails extends React.Component {
             origin : {},
             destination: {},
             plane: {},
+            airline: {},
             tickets: {}
           }
           this.getFlightDetails();
@@ -28,9 +30,13 @@ class FlightDetails extends React.Component {
           // Data is a list
           this.setState({
             flight : data[0]
-          }, () => {this.getAirportOriginDetails();
+          }, () => {
+            this.getAirportOriginDetails();
             this.getAirportDestinationDetails();
-            this.getPlaneDetails();}) 
+            this.getPlaneDetails();
+            this.getFlightTickets();
+            this.getAirlineDetails();
+          }) 
         }
       }
 
@@ -76,6 +82,20 @@ class FlightDetails extends React.Component {
         }
       }
 
+      getAirlineDetails = async () => {
+        const { data, error } = await this.props.supabase
+          .from('airline')
+          .select()
+          .eq('id', this.state.flight.airline )
+  
+        if ( error == null && data.length > 0){
+          // Data is a list
+          this.setState({
+            airline : data[0]
+          }) 
+        }
+      }
+
       getFlightTickets = async () => {
         const { data, error } = await this.props.supabase
           .from('ticket')
@@ -96,9 +116,9 @@ class FlightDetails extends React.Component {
         const half_length = this.state.plane.columns/2;
     
         for(var i = 1; i <= this.state.plane.columns; i++){
-          array.push(<button>{i}</button>)
+          array.push(<Button>{i}</Button>)
           if (i == half_length) {
-            array.push(<button></button>)
+            array.push(<Button></Button>)
           }
         }
         array.push(<br></br>)
@@ -122,10 +142,19 @@ class FlightDetails extends React.Component {
     render() { 
       return (
         <div>
-            <h2> code: { this.state.flight.code } </h2>
-            <h2> departure: { this.state.flight.departure } </h2>
-            <h2> modelo: { this.state.plane.name } </h2>
-            {this.createSeats()}
+            <Descriptions title = "Detalles del vuelo" bordered>
+              <Descriptions.Item label ="Código del vuelo" span = {3}>{ this.state.flight.code }</Descriptions.Item>
+              <Descriptions.Item label ="Aeropuerto de origen">{ this.state.origin.name }</Descriptions.Item>
+              <Descriptions.Item label ="País">{ this.state.origin.country }</Descriptions.Item>
+              <Descriptions.Item label ="Hora de salida">{ this.state.flight.departure }</Descriptions.Item>
+              <Descriptions.Item label ="Aeropuerto de destino">{ this.state.destination.name }</Descriptions.Item>
+              <Descriptions.Item label ="País">{ this.state.destination.country }</Descriptions.Item>
+              <Descriptions.Item label ="Hora de llegada">{ this.state.flight.arrival }</Descriptions.Item>
+              <Descriptions.Item label ="Aerolínea" span = {2}>{ this.state.airline.name }</Descriptions.Item>
+              <Descriptions.Item label ="Modelo del avión">{ this.state.plane.name }</Descriptions.Item>
+              <Descriptions.Item label ="Asientos" span = {2}>{this.createSeats()}</Descriptions.Item>
+            </Descriptions>
+            
         </div>
       )
     }
