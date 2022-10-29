@@ -1,11 +1,10 @@
 import React from 'react';
 import withRouter from './withRouter';
-import { Card, Row, Col, Descriptions, Button, Steps, PageHeader, AutoComplete, Form, Input, Collapse, Typography, Tooltip, Avatar } from 'antd';
-import { getTransitionName } from 'antd/lib/_util/motion';
+import { Card, Row, Col, Descriptions, Button, Steps, PageHeader, AutoComplete, Form, Input, Collapse, Typography, Tooltip, Result, notification } from 'antd';
 const { Step } = Steps;
 const { Meta } = Card;
 const { Panel } = Collapse;
-const { Text, Link } = Typography;
+const { Text } = Typography;
 
 
 
@@ -15,6 +14,7 @@ class TicketBuyPassengers extends React.Component {
     super(props)
     this.code = this.props.params.code;
     this.code_vuelta = undefined;
+    this.user = "1dc61347-640b-465c-aa28-23868f0b8733";
     this.numberOfPassengers = 1;
     this.state = {
       flight: {},
@@ -31,11 +31,15 @@ class TicketBuyPassengers extends React.Component {
       plane2: {},
       airline2: {},
       tickets2: {},
+      discount: {}
     }
     this.passengers = []
     this.tickets = []
     this.hayquehacervuelta = false;
+    this.generalProgress = 1;
     this.appliedDiscount = false;
+    this.discountparam = undefined;
+    this.wrongdiscount = false;
     this.getFlightDetails();
     if (this.code_vuelta != undefined) {
       this.getFlightDetails2();
@@ -134,7 +138,6 @@ class TicketBuyPassengers extends React.Component {
     }
   }
 
-
   getFlightDetails2 = async () => {
     const { data, error } = await this.props.supabase
       .from('flight')
@@ -222,6 +225,27 @@ class TicketBuyPassengers extends React.Component {
       this.setState({
         tickets2: data
       })
+    }
+  }
+
+  getDiscount = async () => {
+    const { data, error } = await this.props.supabase
+      .from('discount')
+      .select()
+      .eq('code', this.discountparam)
+
+    if (error == null && data.length > 0) {
+      // Data is a list
+      this.setState({
+        discount: data[0]
+      }, () => {
+        this.wrongdiscount = false;
+        this.appliedDiscount = true;
+        this.applyDiscount();
+      })
+    } else {
+      this.wrongdiscount = true;
+      this.applyDiscount();
     }
   }
 
@@ -360,7 +384,7 @@ class TicketBuyPassengers extends React.Component {
           required: true,
           message: 'Por favor, introduce el nombre del pasajero',
         },]}>
-        <Input defaultValue="aaa" />
+        <Input/>
       </Form.Item>
 
       <Form.Item label="Apellido" name={"apellido_" + i} rules={[
@@ -368,7 +392,7 @@ class TicketBuyPassengers extends React.Component {
           required: true,
           message: 'Por favor, introduce el apellido del pasajero',
         },]}>
-        <Input defaultValue="aaa" />
+        <Input />
       </Form.Item>
 
 
@@ -414,7 +438,6 @@ class TicketBuyPassengers extends React.Component {
         price: price
       }
     )
-    console.log(this.tickets)
     if (this.state.passengerProgress == this.numberOfPassengers - 1) {
       if (this.code_vuelta == undefined) {
         { this.modifyProgress(1) }
@@ -422,6 +445,7 @@ class TicketBuyPassengers extends React.Component {
         if (!this.hayquehacervuelta) {
           this.hayquehacervuelta = true;
           this.state.passengerProgress = 0;
+          this.generalProgress = this.generalProgress+1;
           this.forceUpdate();
         } else {
           { this.modifyProgress(1) }
@@ -500,31 +524,130 @@ getContentAccordingToProgress() {
     </Row>)
 
   } else if (this.state.progress == 4) {
+    if (!this.appliedDiscount) {
+      array.push(
+        <Form layout="inline"name="basic" labelCol={{ span: 12, }} wrapperCol={{ span: 8, }} onFinish={values => this.calculateDiscount(values)}>
+          <Form.Item label="Código de descuento" name="descuento">
+            <Input />
+          </Form.Item>
+          <Form.Item>
+            <Button htmlType="submit">Aplicar descuento</Button>
+          </Form.Item>
+    
+        </Form>)
+    }
 
-    array.push(
-      <Form layout="inline"name="basic" labelCol={{ span: 8, }} wrapperCol={{ span: 5, }} initialValues={{ remember: true, }}>
-        <Form.Item label="Código de descuento" name="descuento">
-          <Input />
-        </Form.Item>
-        <Form.Item>
-          <Button onClick={() => { this.applyDiscount() }} type="primary">Aplicar descuento</Button>
-        </Form.Item>
-  
-      </Form>)
-    array.push(<Button onClick={() => { this.modifyProgress(1) }} type="primary">Comprar tickets</Button>)
+    array.push( <Form>  <Form.Item label="Número de tarjeta" name={"tarjeta"} rules={[
+      {
+        required: true,
+        message: 'Por favor, introduzca un método de pago',
+      },]}>
+      <Input/>
+    </Form.Item></Form>   )
+    array.push(<Button onClick={() => { this.comprarTickets() }} type="primary">Comprar billetes</Button>)
+    
 
+  } else if (this.state.progress == 5) {
+    array.push(  <Result
+      status="success"
+      title="¡Billetes listos!"
+      subTitle="La compra de los billetes se ha realizado correctamente"
+      extra={[
+        <Button type="primary" key="console">
+          Ver billetes comprados
+        </Button>,
+        <Button key="buy">Volver a ver más vuelos</Button>,
+      ]}
+    />)
   }
+
   return array
+}
+
+comprarTickets() {
+  for (var i = 0; i < this.tickets.length; i++) {
+    this.tickets[i].user = this.user;
+    this.sendCreateTicket(this.tickets[i]);
+  }
+  this.modifyProgress(1);
+}
+
+calculateDiscount(values) {
+
+  this.discountparam = values.descuento;
+  this.getDiscount();
+
+}
+
+async sendCreateTicket(values){
+      
+ //const { data: { user } } = await this.props.supabase.auth.getUser();
+
+//let file = values.image.file  // dont use "value.image.file" it has an error in upload
+
+
+
+  if (this.user != null){
+  const { data, error } = await this.props.supabase
+    .from('ticket')
+    .insert([
+       { 
+          user: this.user, 
+          first_name: values.first_name,
+          last_name: values.last_name,
+          row: values.row,
+          column: values.column,
+          flight_code: values.flight_code
+       }
+    ])
+
+    if (error != null){
+      console.log(error);
+    } else {
+      this.setState({
+        createdItem : true
+      }) 
+    }  
+
+}
+}
+
+applyDiscount() {
+  if (this.wrongdiscount) {
+    notification.open({
+      message: 'No se ha aplicado ningún descuento',
+      description:
+        'El código introducido es érroneo',
+      onClick: () => {
+        console.log('Notification Clicked!');
+      },
+    });
+  } else {
+    for (var i = 0; i < this.tickets.length; i++) {
+      this.tickets[i].price -= ((this.tickets[i].price * this.state.discount.percentage)/100)
+    }
+    notification.open({
+      message: 'Descuento aplicado',
+      description:'Se ha aplicado correctamente un descuento a los billetes ',
+      onClick: () => {
+        console.log('Notification Clicked!');
+      },
+    });
+  }
+  this.forceUpdate();
+
+
 }
 
 modifyProgress(number) {
   this.state.progress += number;
+  this.generalProgress += number;
   this.forceUpdate();
 }
 
 getSteps() {
   if (this.code_vuelta == undefined) {
-    return <Steps progressDot current={this.state.progress}>
+    return <Steps progressDot current={this.generalProgress}>
       <Step title="Vuelos" description="Selección del vuelo" />
       <Step title="Pasajeros" description="Pasajeros que querrán viajar" />
       <Step title="Asientos" description="Asientos para el vuelo de ida" />
@@ -533,7 +656,7 @@ getSteps() {
     </Steps>
 
   }
-  return <Steps progressDot current={this.state.progress}>
+  return <Steps progressDot current={this.generalProgress}>
     <Step title="Vuelos" description="Selección del vuelo" />
     <Step title="Pasajeros" description="Pasajeros que querrán viajar" />
     <Step title="Asientos de ida" description="Asientos para el vuelo de ida" />
