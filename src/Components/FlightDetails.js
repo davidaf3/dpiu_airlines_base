@@ -110,20 +110,30 @@ class FlightDetails extends React.Component {
         }
       }
 
-      createRowSeat = () => {
+      createRowSeat = (j) => {
         console.log(this.state.plane.columns)
+        const row = j
         const array = []
         const half_length = this.state.plane.columns/2;
     
         for(var i = 1; i <= this.state.plane.columns; i++){
-          array.push(<Button>{i}</Button>)
+          for (var z = 0; z < this.state.tickets.length; z++) {
+            if (this.state.tickets[z].column == j) {
+              if (this.state.tickets[z].row == i) {
+                array.push(<Button disabled>X</Button>)
+              } else {
+                array.push(<Button>{i}</Button>)
+              }
+            } else {
+              array.push(<Button>{i}</Button>)
+            }
+          }
+
           if (i == half_length) {
             array.push(<Button></Button>)
           }
         }
         array.push(<br></br>)
-
-    
         return array
       }
 
@@ -132,7 +142,7 @@ class FlightDetails extends React.Component {
         console.log(this.state.plane.rows)
 
         for(var i = 1; i <= this.state.plane.rows; i++){
-          array.push(this.createRowSeat());
+          array.push(this.createRowSeat(i));
         }
 
         return array
@@ -145,10 +155,10 @@ class FlightDetails extends React.Component {
             <Descriptions title = "Detalles del vuelo" bordered>
               <Descriptions.Item label ="Código del vuelo" span = {3}>{ this.state.flight.code }</Descriptions.Item>
               <Descriptions.Item label ="Aeropuerto de origen">{ this.state.origin.name }</Descriptions.Item>
-              <Descriptions.Item label ="País">{ this.state.origin.country }</Descriptions.Item>
+              <Descriptions.Item label ="Ciudad">{ this.state.origin.city }</Descriptions.Item>
               <Descriptions.Item label ="Hora de salida">{ this.state.flight.departure }</Descriptions.Item>
               <Descriptions.Item label ="Aeropuerto de destino">{ this.state.destination.name }</Descriptions.Item>
-              <Descriptions.Item label ="País">{ this.state.destination.country }</Descriptions.Item>
+              <Descriptions.Item label ="Ciudad">{ this.state.destination.city }</Descriptions.Item>
               <Descriptions.Item label ="Hora de llegada">{ this.state.flight.arrival }</Descriptions.Item>
               <Descriptions.Item label ="Aerolínea" span = {2}>{ this.state.airline.name }</Descriptions.Item>
               <Descriptions.Item label ="Modelo del avión">{ this.state.plane.name }</Descriptions.Item>
