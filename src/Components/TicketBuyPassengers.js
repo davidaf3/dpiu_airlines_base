@@ -1,6 +1,6 @@
 import React from 'react';
 import withRouter from './withRouter';
-import { Card, Row, Col, Descriptions, Button, Steps, PageHeader, AutoComplete, Form, Input, Collapse, Typography, Tooltip, Result, notification } from 'antd';
+import { Card, Row, Col, Descriptions, Button, Steps, PageHeader, AutoComplete, Form, Input, Collapse, Typography, Tooltip, Result, notification, Checkbox, List } from 'antd';
 const { Step } = Steps;
 const { Meta } = Card;
 const { Panel } = Collapse;
@@ -40,6 +40,7 @@ class TicketBuyPassengers extends React.Component {
     this.appliedDiscount = false;
     this.discountparam = undefined;
     this.wrongdiscount = false;
+    this.resaltarAsientosBaratos = false
     this.getFlightDetails();
     if (this.code_vuelta != undefined) {
       this.getFlightDetails2();
@@ -250,14 +251,26 @@ class TicketBuyPassengers extends React.Component {
   }
 
   placeSeat(row, column, numberOfSeat) {
-    let price = this.state.flight.base_price;
+    var incremented = false;
+    if (this.hayquehacervuelta) {
+      var price = this.state.flight2.base_price
+    } else {
+      var price = this.state.flight.base_price;
+    } 
     if (column == 1 || column == this.state.plane.columns) {
       price += 20;
+      incremented = true
     }
     if (row == 1) {
       price += 30;
+      incremented = true
     }
-    return <Tooltip placement="top" title={"Asiento " + numberOfSeat}><Col span={1}><Button onClick={() => { this.addTicket(row, column, price) }} style={{ width: "100%" }}>{price + "€"}</Button></Col></Tooltip>
+    if (this.resaltarAsientosBaratos && !incremented) {
+        return <Tooltip placement="top" title={"Asiento " + numberOfSeat}><Col span={1}><Button onClick={() => { this.addTicket(row, column, price) }} style={{ width: "100%" }}><Text type = "success">{price + "€"}</Text></Button></Col></Tooltip>
+    } else {
+      return <Tooltip placement="top" title={"Asiento " + numberOfSeat}><Col span={1}><Button onClick={() => { this.addTicket(row, column, price) }} style={{ width: "100%" }}>{price + "€"}</Button></Col></Tooltip>
+
+    }
   }
 
   createRowSeat = (j, numberOfSeat) => {
@@ -462,8 +475,21 @@ seatPassenger() {
     <Descriptions size="medium" column={1}>
       <Descriptions.Item label="Pasajero"><Text strong>{this.passengers[this.state.passengerProgress].nombre + " " + this.passengers[this.state.passengerProgress].apellido}</Text></Descriptions.Item>
       <Descriptions.Item><Text italic>Selecciona tu asiento</Text></Descriptions.Item>
+      <Descriptions.Item>{this.getCheapestTickets()}</Descriptions.Item>
     </Descriptions>
   </PageHeader>
+}
+
+getCheapestTickets() {
+  return <Checkbox checked={!this.resaltarAsientosBaratos} onChange={this.updateSeatButtons()}>Resaltar asientos más baratos</Checkbox>
+  //return <Button onClick={this.updateSeatButtons()}>Resaltar asientos más baratos</Button>
+}
+
+
+updateSeatButtons() {
+  this.resaltarAsientosBaratos= !this.resaltarAsientosBaratos
+
+
 }
 
 
@@ -533,7 +559,6 @@ getContentAccordingToProgress() {
           <Form.Item>
             <Button htmlType="submit">Aplicar descuento</Button>
           </Form.Item>
-    
         </Form>)
     }
 
@@ -544,6 +569,19 @@ getContentAccordingToProgress() {
       },]}>
       <Input/>
     </Form.Item></Form>   )
+    /* 
+    array.push(<List
+      header={<div>Header</div>}
+      footer={<div>Footer</div>}
+      bordered
+      dataSource={this.tickets}
+      renderItem={(ticket) => (
+        <List.Item>
+          <Typography.Text mark>[ITEM]</Typography.Text>  {ticket}
+        </List.Item>
+      )}
+    />)
+    */
     array.push(<Button onClick={() => { this.comprarTickets() }} type="primary">Comprar billetes</Button>)
     
 
@@ -562,6 +600,10 @@ getContentAccordingToProgress() {
   }
 
   return array
+}
+
+getListTickets() {
+  return    
 }
 
 comprarTickets() {
