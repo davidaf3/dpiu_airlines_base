@@ -1,49 +1,21 @@
-import {
-  Form,
-  Row,
-  Button,
-  InputNumber,
-  DatePicker,
-  Col,
-  Radio,
-} from "antd";
+import { Form, Row, Button, InputNumber, DatePicker, Col, Radio } from "antd";
 import { SearchOutlined, SwapOutlined } from "@ant-design/icons";
 import AirportSelect from "./AirportSelect";
 import { useEffect, useRef, useState } from "react";
 import moment from "moment";
 
-const excludeAirport = (airportList, code) =>
-  airportList.filter((airport) => airport.code !== code);
-
-export default function SearchFlight({ supabase, values, onSearch }) {
-  const [airports, setAirports] = useState([]);
-  const [origins, setOrigins] = useState([]);
-  const [destinations, setDestinations] = useState([]);
+export default function SearchFlight({ airports, values, onSearch }) {
+  const [origin, setOrigin] = useState(values?.origin);
+  const [destination, setDestination] = useState(values?.destination);
   const [roundTrip, setRoundTrip] = useState(values?.roundTrip ?? true);
 
   const formRef = useRef(null);
+  const prevRoundTrip = useRef(roundTrip);
 
   useEffect(() => {
-    supabase
-      .from("airport")
-      .select("code, name, country")
-      .then(({ data }) => {
-        setAirports(data);
-      });
-  }, [supabase]);
+    if (roundTrip === prevRoundTrip.current) return;
+    prevRoundTrip.current = roundTrip;
 
-  useEffect(() => {
-    if (!values) {
-      setDestinations(airports);
-      setOrigins(airports);
-      return;
-    }
-
-    setDestinations(excludeAirport(airports, values.origin));
-    setOrigins(excludeAirport(airports, values.destination));
-  }, [airports, values]);
-
-  useEffect(() => {
     let [departureDate, returnDate] = formRef.current.getFieldValue(
       "dates"
     ) ?? [undefined, undefined];
@@ -60,17 +32,18 @@ export default function SearchFlight({ supabase, values, onSearch }) {
     }
   }, [roundTrip]);
 
-  const swapOriginDestination = () => {
-    setDestinations(origins);
-    setOrigins(destinations);
-    const destination = formRef.current.getFieldValue("destination");
-    const origin = formRef.current.getFieldValue("origin");
-    formRef.current.setFieldValue("destination", origin);
-    formRef.current.setFieldValue("origin", destination);
-  };
+  useEffect(() => {
+    formRef.current.setFieldValue("origin", origin);
+  }, [origin]);
 
-  const onAirportChange = (setter) => (code) =>
-    setter(excludeAirport(airports, code));
+  useEffect(() => {
+    formRef.current.setFieldValue("destination", destination);
+  }, [destination]);
+
+  const swapOriginDestination = () => {
+    setOrigin(destination);
+    setDestination(origin);
+  };
 
   const disabledDate = (current) => current < moment().subtract(1, "day");
 
@@ -104,8 +77,9 @@ export default function SearchFlight({ supabase, values, onSearch }) {
           >
             <AirportSelect
               key="origin"
-              airports={origins}
-              onChange={onAirportChange(setDestinations)}
+              airports={airports}
+              excluded={destination}
+              onChange={setOrigin}
             />
           </Form.Item>
         </Col>
@@ -133,8 +107,9 @@ export default function SearchFlight({ supabase, values, onSearch }) {
           >
             <AirportSelect
               key="destination"
-              airports={destinations}
-              onChange={onAirportChange(setOrigins)}
+              airports={airports}
+              excluded={origin}
+              onChange={setDestination}
             />
           </Form.Item>
         </Col>
