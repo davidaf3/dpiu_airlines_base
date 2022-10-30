@@ -2,6 +2,7 @@
   "name": "dpiu_airlines",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://davidaf3.github.io/dpiu_airlines/",
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@supabase/supabase-js": "^2.0.4",
