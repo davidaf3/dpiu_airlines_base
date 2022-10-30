@@ -1,6 +1,6 @@
 import React from 'react';
 import withRouter from './withRouter';
-import { Card, Row, Col, Descriptions, Button, Steps, PageHeader, AutoComplete, Form, Input, Collapse, Typography, Tooltip, Result, notification, Checkbox, List } from 'antd';
+import { Card, Row, Col, Descriptions, Button, Steps, PageHeader, AutoComplete, Form, Input, Collapse, Typography, Tooltip, Result, notification, Checkbox, Table } from 'antd';
 const { Step } = Steps;
 const { Meta } = Card;
 const { Panel } = Collapse;
@@ -515,7 +515,7 @@ getContentAccordingToProgress() {
   if (this.state.progress == 1) {
 
     array.push(<Form onFinish={values => this.getPassengers(values)}><Collapse defaultActiveKey={['1']}>{this.createPassengerForms()}</Collapse>
-      <Button>Cambiar búsqueda</Button>
+      <Button> Cambiar búsqueda</Button>
       <Button htmlType="submit" type="primary">Siguiente</Button></Form>)
 
   } else if (this.state.progress == 2) {
@@ -569,6 +569,10 @@ getContentAccordingToProgress() {
       },]}>
       <Input/>
     </Form.Item></Form>   )
+
+
+
+
     /* 
     array.push(<List
       header={<div>Header</div>}
@@ -582,6 +586,41 @@ getContentAccordingToProgress() {
       )}
     />)
     */
+    const columns = [
+      {
+        title: 'Vuelo',
+        dataIndex: 'flight_code',
+        key: 'flight_code',
+      },
+      {
+        title: 'Nombre',
+        dataIndex: 'first_name',
+        key: 'first_name',
+      },
+      {
+        title: 'Apellido',
+        dataIndex: 'last_name',
+        key: 'last_name',
+      },
+      {
+        title: 'Fila',
+        dataIndex: 'row',
+        key: 'row',
+      },
+      {
+        title: 'Columna',
+        dataIndex: 'column',
+        key: 'column',
+      },
+      {
+        title: 'Precio',
+        dataIndex: 'price',
+        key: 'price',
+      },
+  
+    ];  
+  
+    array.push(<Table columns={columns} dataSource={this.tickets} />)
     array.push(<Button onClick={() => { this.comprarTickets() }} type="primary">Comprar billetes</Button>)
     
 
@@ -602,9 +641,7 @@ getContentAccordingToProgress() {
   return array
 }
 
-getListTickets() {
-  return    
-}
+
 
 comprarTickets() {
   for (var i = 0; i < this.tickets.length; i++) {
@@ -639,7 +676,8 @@ async sendCreateTicket(values){
           last_name: values.last_name,
           row: values.row,
           column: values.column,
-          flight_code: values.flight_code
+          flight_code: values.flight_code,
+          price: values.price
        }
     ])
 
