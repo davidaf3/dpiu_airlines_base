@@ -8,6 +8,7 @@ import FlightDetails from "./Components/FlightDetails";
 import withRouter from "./Components/withRouter";
 import TicketBuyPassengers from "./Components/TicketBuyPassengers";
 import Home from "./Components/Home";
+import FlightSearchResults from "./Components/FlightSearchResults";
 
 class App extends React.Component {
   constructor(props) {
@@ -61,12 +62,14 @@ class App extends React.Component {
               />
             }
           />
-
           <Route
             path="/"
             element={<Home supabase={this.supabase} />}
           />
-
+          <Route
+            path="/flights/search"
+            element={<FlightSearchResults supabase={this.supabase} />}
+          />
           <Route
             path="/flights/:code"
             element={<FlightDetails supabase={this.supabase} />}
