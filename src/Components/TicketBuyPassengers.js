@@ -13,9 +13,9 @@ class TicketBuyPassengers extends React.Component {
   constructor(props) {
     super(props)
     this.code = this.props.params.code;
-    this.code_vuelta = undefined;
+    this.code_vuelta = "V02";
     this.user = "1dc61347-640b-465c-aa28-23868f0b8733";
-    this.numberOfPassengers = 1;
+    this.numberOfPassengers = 3;
     this.state = {
       flight: {},
       origin: {},
@@ -530,19 +530,19 @@ getContentAccordingToProgress() {
 
     array.push(<Row gutter={16}>
       <Col span={8}>
-        <Card title="Value" hoverable style={{ width: 240, }} cover={<img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}>
+        <Card title="Value" hoverable style={{ width: 240, }} cover={<img alt="example" src="https://gfhyobdofzshidbbnaxf.supabase.co/storage/v1/object/public/tarifas/value.png" />}>
           <Meta title="Viaje ligero" description="Para solo viajar" />
           <Button onClick={() => { this.addPrice(0) }} >Continuar con precio</Button>
         </Card>
       </Col>
       <Col span={8}>
-        <Card title="Regular" hoverable style={{ width: 240, }} cover={<img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}>
+        <Card title="Regular" hoverable style={{ width: 240, }} cover={<img alt="example" src="https://gfhyobdofzshidbbnaxf.supabase.co/storage/v1/object/public/tarifas/regular.png" />}>
           <Meta title="Para vuelos cortos" description="Excelente para vuelos cortos" />
           <Button onClick={() => { this.addPrice(20) }} type="primary">20 € más por billete</Button>
         </Card>
       </Col>
       <Col span={8}>
-        <Card title="Premium" hoverable style={{ width: 240, }} cover={<img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}>
+        <Card title="Plus" hoverable style={{ width: 240, }} cover={<img alt="example" src="https://gfhyobdofzshidbbnaxf.supabase.co/storage/v1/object/public/tarifas/plus.png" />}>
           <Meta title="Para viajar con comodidad" description="La mejor manera de viajar" />
           <Button onClick={() => { this.addPrice(100) }} type="primary">100 € más por billete</Button>
         </Card>
