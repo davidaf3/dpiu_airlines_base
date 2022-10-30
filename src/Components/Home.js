@@ -1,4 +1,5 @@
 import SearchFlightInput from "./SearchFlightInput";
+import GetCheapestFlights from "./GetCheapestFlights";
 import { useNavigate } from "react-router-dom";
 import { serializeSearch } from "../searchSerialization";
 import { useEffect, useState } from "react";
@@ -26,6 +27,7 @@ export default function Home({ supabase }) {
         airports={airports}
         onSearch={searchFlights}
       ></SearchFlightInput>
+      <GetCheapestFlights supabase={supabase}/>
     </div>
   );
 }
