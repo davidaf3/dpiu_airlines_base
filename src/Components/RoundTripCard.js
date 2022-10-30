@@ -8,7 +8,7 @@ export default function RoundTripCard({ trip, airports, airlines }) {
   const { Title, Text } = Typography;
 
   return (
-    <Row style={{ width: "100%" }}>
+    <Row style={{ width: "100%", padding: "1em 0" }}>
       <Col flex="auto">
         <Row>
           <FlightCard
@@ -18,7 +18,7 @@ export default function RoundTripCard({ trip, airports, airlines }) {
             showSelect={false}
           ></FlightCard>
         </Row>
-        <Divider dashed />
+        <Divider dashed style={{ margin: "12px 0" }} />
         <Row>
           <FlightCard
             flight={trip.return}
@@ -28,7 +28,7 @@ export default function RoundTripCard({ trip, airports, airlines }) {
           ></FlightCard>
         </Row>
       </Col>
-      <Divider type="vertical" style={{height: "auto"}} />
+      <Divider type="vertical" style={{ height: "auto" }} />
       <Col
         style={{
           marginLeft: "16px",
@@ -48,7 +48,7 @@ export default function RoundTripCard({ trip, airports, airlines }) {
           >
             <Row>
               <Title level={3} style={{ marginBottom: ".2em" }}>
-                {trip.departure.base_price + trip.return.base_price} €
+                {trip.base_price} €
               </Title>
             </Row>
             <Row>

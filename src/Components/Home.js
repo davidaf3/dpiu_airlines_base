@@ -1,4 +1,4 @@
-import SearchFlight from "./SearchFlight";
+import SearchFlightInput from "./SearchFlightInput";
 import { useNavigate } from "react-router-dom";
 import { serializeSearch } from "../searchSerialization";
 import { useEffect, useState } from "react";
@@ -22,10 +22,10 @@ export default function Home({ supabase }) {
 
   return (
     <div>
-      <SearchFlight
+      <SearchFlightInput
         airports={airports}
         onSearch={searchFlights}
-      ></SearchFlight>
+      ></SearchFlightInput>
     </div>
   );
 }

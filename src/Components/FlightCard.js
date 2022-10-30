@@ -1,13 +1,4 @@
-import {
-  Row,
-  Col,
-  Typography,
-  Avatar,
-  Skeleton,
-  Button,
-  Divider,
-  Space,
-} from "antd";
+import { Row, Col, Typography, Avatar, Skeleton, Button, Divider } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
@@ -28,7 +19,7 @@ export default function FlightCard({
 
   const airline = airlines.get(flight.airline);
 
-  const { Title, Text } = Typography;
+  const { Title, Text, Link } = Typography;
 
   return (
     <Row style={{ width: "100%" }}>
@@ -87,7 +78,7 @@ export default function FlightCard({
         }}
       >
         <Button type="link" onClick={() => navigate(`/flights/${flight.code}`)}>
-          Detalles
+          <Link type="Link" underline>Detalles</Link>
         </Button>
       </Col>
       {showSelect && <Divider type="vertical" style={{ height: "auto" }} />}
