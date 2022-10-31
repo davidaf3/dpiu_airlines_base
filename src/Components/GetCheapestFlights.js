@@ -4,9 +4,6 @@ import { Dropdown, Menu, Space, Card, Row, Col, Button, Typography, Divider } fr
 import { DownOutlined } from '@ant-design/icons';
 const { Text, Title } = Typography;
 
-
-
-
 class GetCheapestFlights extends React.Component {
 
   constructor(props) {
@@ -18,7 +15,6 @@ class GetCheapestFlights extends React.Component {
       name: "Todos los aeropuertos"
     }
     this.getAirports();
-
   }
 
 
@@ -31,11 +27,6 @@ class GetCheapestFlights extends React.Component {
       if (error == null) {
         this.setState({
           flights: data
-        }, () => {
-          for (let i = 0; i < this.state.flights.length; i++) {
-            this.getAirportDestinationDetails(this.state.flights[i].destination, this.state.flights[i])
-            this.getAirportDestinationDetails(this.state.flights[i].destination, this.state.flights[i])
-          }
         })
       }
     } else {
@@ -46,25 +37,8 @@ class GetCheapestFlights extends React.Component {
       if (error == null) {
         this.setState({
           flights: data
-        }, () => {
-          for (let i = 0; i < this.state.flights.length; i++) {
-            this.getAirportDestinationDetails(this.state.flights[i].destination, this.state.flights[i])
-          }
         })
       }
-    }
-  }
-
-  getAirportDestinationDetails = async (destination, object) => {
-    const { data, error } = await this.props.supabase
-      .from('airport')
-      .select('city')
-      .eq('code', destination)
-
-    if (error == null && data.length > 0) {
-      // Data is a list
-      object.city = data[0].city
-      this.forceUpdate();
     }
   }
 
@@ -84,42 +58,58 @@ class GetCheapestFlights extends React.Component {
     }
   }
 
+  getNameCity(code) {
+    for (let i = 0; i < this.state.airports.length; i++) {
+      if (this.state.airports[i].code == code) {
+        return this.state.airports[i].city
+      }
+    }
+  }
+
   generateColumns() {
     let array = []
     if (this.state.chosen == undefined) {
       for (let i = 0; i < this.state.flights.length; i++) {
-        array.push(<Col span={4}>
-          <Card title={"Vuelo desde " + this.state.flights[i].origin + " a " + this.state.flights[i].city} hoverable style={{ width: 350, }} cover={<img alt="example" src={"https://gfhyobdofzshidbbnaxf.supabase.co/storage/v1/object/public/cities/" + this.state.flights[i].destination + ".png"} />}>
+        array.push(<Col span={6}>
+          <Card title={"Vuelo desde " + this.getNameCity(this.state.flights[i].origin) + " a " + this.getNameCity(this.state.flights[i].destination)} hoverable style={{ width: 350, }} cover={<img alt="example" src={"https://gfhyobdofzshidbbnaxf.supabase.co/storage/v1/object/public/cities/" + this.state.flights[i].destination + ".png"} />}>
             <Button type="primary" onClick={() => { }} >{"Billetes desde " + this.state.flights[i].base_price + " €"}</Button>
           </Card>
         </Col>)
       }
     } else {
       for (let i = 0; i < this.state.flights.length; i++) {
-        array.push(<Col span={4}>
-          <Card title={"Vuelo a " + this.state.flights[i].city} hoverable style={{ width: 350, }} cover={<img alt="example" src={"https://gfhyobdofzshidbbnaxf.supabase.co/storage/v1/object/public/cities/" + this.state.flights[i].destination + ".png"} />}>
+        array.push(<Col span={6}>
+          <Card title={"Vuelo a " + this.getNameCity(this.state.flights[i].destination)} hoverable style={{ width: 350, }} cover={<img alt="example" src={"https://gfhyobdofzshidbbnaxf.supabase.co/storage/v1/object/public/cities/" + this.state.flights[i].destination + ".png"} />}>
             <Button type="primary" onClick={() => { }} >{"Billetes desde " + this.state.flights[i].base_price + " €"}</Button>
           </Card>
         </Col>)
       }
 
     }
-
     return array;
-
   }
 
   updateChosen = ({ key }) => {
-    let airport = this.state.airports[key]
-    this.setState({
-      chosen: airport.code,
-      name: airport.city
-    }, () => {
-      this.getCheapestFlights()
-      this.forceUpdate();
+    if (key < this.state.airports.length) {
+      let airport = this.state.airports[key]
+      this.setState({
+        chosen: airport.code,
+        name: airport.city
+      }, () => {
+        this.getCheapestFlights()
+        this.forceUpdate();
+      }
+      )
+    } else {
+      this.setState({
+        chosen: undefined,
+        name: "Todos los aeropuertos"
+      }, () => {
+        this.getCheapestFlights()
+        this.forceUpdate();
+      }
+      )
     }
-    )
-
 
   }
 
@@ -132,6 +122,7 @@ class GetCheapestFlights extends React.Component {
       item.label = (<Text>{this.state.airports[i].city}</Text>)
       items.push(item);
     }
+    items.push({ key: this.state.airports.length, label: <Text>Todos los aeropuertos</Text>})
     const menu = (
       <Menu onClick={this.updateChosen} items={items}
       />
@@ -147,14 +138,12 @@ class GetCheapestFlights extends React.Component {
   render() {
     let array = []
     array.push(<Divider></Divider>)
-    array.push(<Row>{this.generateDropDown()}</Row>)
+    array.push(<Row span={5}>{this.generateDropDown()}</Row>)
     array.push(<Divider></Divider>)
-    array.push(<Row>{this.generateColumns()}</Row>)
+    array.push(<Row span={5}>{this.generateColumns()}</Row>)
     return array
   }
 }
-
-
 
 export default withRouter(GetCheapestFlights);
 
