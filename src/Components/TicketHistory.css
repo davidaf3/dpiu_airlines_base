@@ -1,0 +1,7 @@
+.ant-table-row .action {
+  visibility: hidden;
+}
+
+.ant-table-row:hover .action {
+  visibility: visible;
+}

@@ -10,6 +10,58 @@ export async function getAirlines(supabase) {
   return new Map(data.map((airline) => [airline.id, airline]));
 }
 
+export async function getTicketHistory(supabase, user) {
+  const { data } = await supabase
+    .from("ticket_with_flight")
+    .select("*")
+    .eq("user", user);
+
+  const flights = [];
+  const flightsMap = new Map();
+  data.forEach((row) => {
+    const flightKey = row.flight_code + row.created_at.substring(0, 16);
+
+    const ticket = {
+      key: row.id,
+      id: row.id,
+      firstName: row.first_name,
+      lastName: row.last_name,
+      row: row.row,
+      column: row.column,
+      price: row.price,
+    };
+
+    if (flightsMap.has(flightKey)) {
+      const flight = flightsMap.get(flightKey);
+      flight.tickets.push(ticket);
+      flight.price += ticket.price;
+      return;
+    }
+
+    const flight = {
+      key: flightKey,
+      code: row.flight_code,
+      buyDate: moment(row.created_at),
+      origin: row.origin,
+      destination: row.destination,
+      airline: row.airline,
+      departure: moment(row.departure),
+      arrival: moment(row.arrival),
+      price: ticket.price,
+      tickets: [ticket],
+    };
+
+    flights.push(flight);
+    flightsMap.set(flightKey, flight);
+  });
+  return flights.sort((f1, f2) => -f1.buyDate.diff(f2.buyDate));
+}
+
+export async function returnTickets(supabase, ids) {
+  const { error } = await supabase.from("ticket").delete().in("id", ids);
+  return error;
+}
+
 function searchToSingleFlightQueryArgs(search) {
   return {
     origin_arg: search.origin,

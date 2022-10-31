@@ -627,7 +627,7 @@ getContentAccordingToProgress() {
       title="¡Billetes listos!"
       subTitle="La compra de los billetes se ha realizado correctamente"
       extra={[
-        <Button type="primary" key="console">
+        <Button type="primary" key="console" onClick={() => this.props.navigate("/user/history")}>
           Ver billetes comprados
         </Button>,
         <Button key="buy" onClick={() => this.props.navigate("/")}>Volver a ver más vuelos</Button>,

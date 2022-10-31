@@ -9,7 +9,8 @@ import withRouter from "./Components/withRouter";
 import TicketBuyPassengers from "./Components/TicketBuyPassengers";
 import Home from "./Components/Home";
 import SearchFlight from "./Components/SearchFlight";
-
+import TicketHistory from "./Components/TicketHistory";
+import { getAirlines, getAirports } from "./api";
 
 class App extends React.Component {
   constructor(props) {
@@ -24,13 +25,27 @@ class App extends React.Component {
       detectSessionInUrl: true,
     };
 
-    const supabase = createClient(
+    this.supabase = createClient(
       "https://gfhyobdofzshidbbnaxf.supabase.co",
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmaHlvYmRvZnpzaGlkYmJuYXhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjY4OTUwNzQsImV4cCI6MTk4MjQ3MTA3NH0.-MgTPuKPwfZ8xJbwoblznb9EZJUCxW6cFlYHvbjrCHs",
       options
     );
 
-    this.supabase = supabase;
+    this.state = {
+      airports: new Map(),
+      airlines: new Map(),
+    };
+  }
+
+  componentDidMount() {
+    Promise.all([getAirlines(this.supabase), getAirports(this.supabase)]).then(
+      ([airlines, airports]) => {
+        this.setState({
+          airports,
+          airlines,
+        });
+      }
+    );
   }
 
   callBackOnFinishLoginForm = async (loginUser) => {
@@ -63,10 +78,7 @@ class App extends React.Component {
               />
             }
           />
-          <Route
-            path="/"
-            element={<Home supabase={this.supabase} />}
-          />
+          <Route path="/" element={<Home supabase={this.supabase} />} />
           <Route
             path="/flights/search"
             element={<SearchFlight supabase={this.supabase} />}
@@ -78,6 +90,16 @@ class App extends React.Component {
           <Route
             path="/flights/buy_ticket/:code"
             element={<TicketBuyPassengers supabase={this.supabase} />}
+          />
+          <Route
+            path="/user/history"
+            element={
+              <TicketHistory
+                supabase={this.supabase}
+                airports={this.state.airports}
+                airlines={this.state.airlines}
+              />
+            }
           />
         </Routes>
       </div>
