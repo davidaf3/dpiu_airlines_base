@@ -112,6 +112,8 @@ export async function searchSingleFlight(supabase, search, order, filters) {
   let responses = await Promise.all([flightsQuery, airportsQuery, hoursQuery]);
   responses = responses.map((response) => response.data);
 
+  responses[1] = responses[1].map((el) => el.airline);
+
   const hours = responses[2];
   responses[2] = {
     min: moment(hours.min).get("hour"),
@@ -144,11 +146,14 @@ export async function searchRoundTrip(supabase, search, order, filters) {
     Object.keys(result).forEach((key) => {
       if (key.startsWith("departure"))
         trip.departure[key.replace("departure_", "")] = result[key];
-      else trip.return[key.replace("return_", "")] = result[key];
+      else if (key.startsWith("return"))
+        trip.return[key.replace("return_", "")] = result[key];
     });
 
     return trip;
   });
+
+  responses[1] = responses[1].map((el) => el.airline);
 
   const hours = responses[2];
   responses[2] = {

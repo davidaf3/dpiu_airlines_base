@@ -49,11 +49,9 @@ export default function SearchResults({
       setLoading(false);
       setResults(newResults);
       minMaxHours.current = newMinMaxHours;
-      availabelAirlines.current = newAvailableAirlines.map((el) =>
-        airlines.get(Number.parseInt(el.airline))
-      );
+      availabelAirlines.current = newAvailableAirlines;
     },
-    [supabase, airlines]
+    [supabase]
   );
 
   const resetFilters = () => {
@@ -65,8 +63,10 @@ export default function SearchResults({
   };
 
   useEffect(() => {
-    filters.current = null;
-    fetchResults(search).then(resetFilters);
+    if (search) {
+      filters.current = null;
+      fetchResults(search).then(resetFilters);
+    }
   }, [search, fetchResults]);
 
   const { Text } = Typography;
@@ -138,7 +138,8 @@ export default function SearchResults({
           <SearchFilters
             ref={filtersForm}
             minMaxHours={minMaxHours.current}
-            airlines={availabelAirlines.current}
+            availableAirlines={availabelAirlines.current}
+            allAirlines={airlines}
             setFilters={applyFilters}
           />
         )}

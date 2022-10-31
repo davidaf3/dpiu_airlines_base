@@ -9,9 +9,10 @@ import {
   Typography,
 } from "antd";
 import { useRef, forwardRef, useImperativeHandle } from "react";
+import { sortAlphabetically } from "../util";
 import HourRangeSlider from "./HourRangeSlider";
 
-function getDefaultValues(minMaxHours, airlines) {
+function getDefaultValues(minMaxHours, availableAirlines) {
   const values = minMaxHours.departure
     ? {
         departure_hour: Object.values(minMaxHours.departure),
@@ -20,12 +21,12 @@ function getDefaultValues(minMaxHours, airlines) {
     : {
         hour: Object.values(minMaxHours),
       };
-  values.airlines = airlines.map((airline) => airline.id);
+  values.airlines = availableAirlines;
   return values;
 }
 
 export default forwardRef(function SearchFilters(
-  { minMaxHours, airlines, setFilters },
+  { minMaxHours, availableAirlines, allAirlines, setFilters },
   ref
 ) {
   const form = useRef();
@@ -48,7 +49,7 @@ export default forwardRef(function SearchFilters(
       ref={form}
       layout="vertical"
       onFinish={setFilters}
-      initialValues={getDefaultValues(minMaxHours, airlines)}
+      initialValues={getDefaultValues(minMaxHours, availableAirlines)}
     >
       <Collapse defaultActiveKey={["1", "2"]}>
         <Collapse.Panel header="Hora de salida" key="1">
@@ -84,10 +85,7 @@ export default forwardRef(function SearchFilters(
               <Button
                 type="link"
                 onClick={() =>
-                  form.current.setFieldValue(
-                    "airlines",
-                    airlines.map((airline) => airline.id)
-                  )
+                  form.current.setFieldValue("airlines", availableAirlines)
                 }
               >
                 <Link type="Link" underline>
@@ -98,10 +96,15 @@ export default forwardRef(function SearchFilters(
           </Row>
           <Form.Item name="airlines">
             <Checkbox.Group
-              options={airlines.map((airline) => ({
-                label: airline.name,
-                value: airline.id,
-              }))}
+              options={availableAirlines
+                .map((id) => {
+                  const airline = allAirlines.get(id);
+                  return {
+                    label: airline?.name ?? id,
+                    value: id,
+                  };
+                })
+                .sort(sortAlphabetically((opt) => opt.label))}
             />
           </Form.Item>
         </Collapse.Panel>

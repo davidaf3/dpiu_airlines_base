@@ -10,7 +10,7 @@ export default function SearchFlight({ supabase }) {
 
   const [airports, setAirports] = useState(new Map());
   const [airlines, setAirlines] = useState(new Map());
-  const [search, setSearch] = useState(deserializeSearch(searchParams));
+  const [search, setSearch] = useState(null);
 
   useEffect(() => {
     getAirports(supabase).then(setAirports);
@@ -24,18 +24,20 @@ export default function SearchFlight({ supabase }) {
   const onSearch = (values) => setSearchParams(serializeSearch(values));
 
   return (
-    <div>
-      <SearchFlightInput
-        airports={airports}
-        onSearch={onSearch}
-        values={search}
-      />
-      <SearchResults
-        supabase={supabase}
-        search={search}
-        airports={airports}
-        airlines={airlines}
-      ></SearchResults>
-    </div>
+    search && (
+      <div>
+        <SearchFlightInput
+          airports={airports}
+          onSearch={onSearch}
+          values={search}
+        />
+        <SearchResults
+          supabase={supabase}
+          search={search}
+          airports={airports}
+          airlines={airlines}
+        ></SearchResults>
+      </div>
+    )
   );
 }
