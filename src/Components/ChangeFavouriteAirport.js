@@ -59,7 +59,7 @@ export default function ChangeFavouriteAirport({ airports, values }) {
   useEffect(() => {
     console.log(airports)
     formRef.current.setFieldValue("fav", fav);
-    airportWrite = formRef.current.values.fav
+    //airportWrite = formRef.current.values.fav
     console.log(airportWrite)
   }, [fav]);
 
