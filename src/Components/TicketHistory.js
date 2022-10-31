@@ -21,7 +21,7 @@ function updateFilter(filterRef, history, getter, mapper) {
   });
 }
 
-export default function TicketHistory({ supabase, airports, airlines }) {
+export default function TicketHistory({ supabase, airports, airlines, user }) {
   const now = moment();
   const navigate = useNavigate();
 
@@ -75,19 +75,17 @@ export default function TicketHistory({ supabase, airports, airlines }) {
   };
 
   useEffect(() => {
-    getTicketHistory(supabase, "1dc61347-640b-465c-aa28-23868f0b8733").then(
-      (newHistory) => {
-        setHistory(newHistory);
-        setExpandedRows([newHistory[0].key]);
-        setLoading(false);
-        updateFilter(
-          flightFilter,
-          newHistory,
-          (flight) => flight.code,
-          (code) => ({ text: code, value: code })
-        );
-      }
-    );
+    getTicketHistory(supabase, user.id).then((newHistory) => {
+      setHistory(newHistory);
+      updateFilter(
+        flightFilter,
+        newHistory,
+        (flight) => flight.code,
+        (code) => ({ text: code, value: code })
+      );
+      if (newHistory.length > 0) setExpandedRows([newHistory[0].key]);
+      setLoading(false);
+    });
   }, [supabase]);
 
   useEffect(() => {
@@ -292,7 +290,7 @@ export default function TicketHistory({ supabase, airports, airlines }) {
 
     return (
       <Table
-        style={{ marginLeft: "30%" }}
+        style={{ marginLeft: "20%" }}
         columns={ticketColumns}
         dataSource={[...flight.tickets]}
         pagination={false}

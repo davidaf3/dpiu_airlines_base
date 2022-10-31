@@ -74,6 +74,7 @@ export default function SearchResults({
   return (
     <div>
       <List
+        style={{backgroundColor: "white"}}
         loading={loading}
         bordered={true}
         dataSource={results}

@@ -10,6 +10,14 @@ export async function getAirlines(supabase) {
   return new Map(data.map((airline) => [airline.id, airline]));
 }
 
+export async function getFavouriteAirport(supabase, userId) {
+  const { data } = await supabase
+    .from("user")
+    .select("airport")
+    .eq("id", userId);
+  return data;
+}
+
 export async function getTicketHistory(supabase, user) {
   const { data } = await supabase
     .from("ticket_with_flight")

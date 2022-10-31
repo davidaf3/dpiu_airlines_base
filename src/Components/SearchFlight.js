@@ -5,7 +5,7 @@ import { deserializeSearch, serializeSearch } from "../searchSerialization";
 import { getAirports, getAirlines } from "../api";
 import SearchResults from "./SearchResults";
 
-export default function SearchFlight({ supabase }) {
+export default function SearchFlight({ supabase, user }) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [airports, setAirports] = useState(new Map());
@@ -30,6 +30,7 @@ export default function SearchFlight({ supabase }) {
           airports={airports}
           onSearch={onSearch}
           values={search}
+          user={user}
         />
         <SearchResults
           supabase={supabase}

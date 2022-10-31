@@ -1,67 +1,31 @@
-import { Form, Row, Button, InputNumber, DatePicker, Col, Radio, notification } from "antd";
+import { Form, Row, Button, Col, notification } from "antd";
 import AirportSelect from "./AirportSelect";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
-export default function ChangeFavouriteAirport({ airports, values }) {
-  const [fav, setFav] = useState(values?.fav);
-
+export default function ChangeFavouriteAirport({ supabase, airports, user }) {
   const formRef = useRef(null);
 
-  const user = "1dc61347-640b-465c-aa28-23868f0b8733";
+  const updateFavouriteAirport = async (values) => {
+    const { data, error } = await supabase
+      .from("user")
+      .update({ airport: values.fav })
+      .eq("id", user.id);
 
-  const airportWrite = undefined
-  const base_airport = undefined
-
-
-  const updateFavouriteAirport = async () => {
-    if (airportWrite != base_airport) {
-      const { data, error } = await this.props.supabase
-        .from('user')
-        .update({ airport: airportWrite })
-        .eq('id', user)
-
-      if (error == null) {
-        notification.open({
-          message: 'Se ha actualizado el aeropuerto favorito',
-          description:
-            'Ahora este aeropuerto será el que te aparezca por defecto como aeropuerto de origen',
-          onClick: () => {
-            console.log('Notification Clicked!');
-          },
-        });
-      }
-    } else {
+    if (error === null) {
       notification.open({
-        message: 'No se ha actualizado el aeropuerto favorito',
+        message: "Se ha actualizado el aeropuerto favorito",
         description:
-          'Se ha escogido el mismo aeropuerto que ya estaba escogido como aeropuerto favorito',
+          "Ahora este aeropuerto será el que te aparezca por defecto como aeropuerto de origen",
         onClick: () => {
-          console.log('Notification Clicked!');
+          console.log("Notification Clicked!");
         },
       });
     }
   };
 
-  const getFavouriteAirport = async () => {
-    const { data, error } = await this.props.supabase
-      .from('user')
-      .select('airport')
-      .eq('id', user)
-
-    if (error == null && data.length > 0) {
-      // Data is a list
-      base_airport = data[0]
-    }
-  };
-
-
-
   useEffect(() => {
-    console.log(airports)
-    formRef.current.setFieldValue("fav", fav);
-    //airportWrite = formRef.current.values.fav
-    console.log(airportWrite)
-  }, [fav]);
+    if (user) formRef.current.setFieldValue("fav", user.airport);
+  }, [user]);
 
   return (
     <Form
@@ -72,25 +36,15 @@ export default function ChangeFavouriteAirport({ airports, values }) {
     >
       <Row align="bottom">
         <Col span={5}>
-          <Form.Item
-            name="fav"
-            label="Aeropuerto favorito"
-          >
-            <AirportSelect
-              key="fav"
-              airports={airports}
-              onChange={setFav}
-            />
+          <Form.Item name="fav" label="Aeropuerto favorito">
+            <AirportSelect key="fav" airports={airports} />
           </Form.Item>
         </Col>
         <Col span={1}>
           <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              title="Seleccionar"
-              block
-            >Seleccionar</Button>
+            <Button type="primary" htmlType="submit" title="Seleccionar" block>
+              Seleccionar
+            </Button>
           </Form.Item>
         </Col>
       </Row>

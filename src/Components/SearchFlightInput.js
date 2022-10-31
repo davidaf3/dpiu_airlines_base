@@ -4,7 +4,7 @@ import AirportSelect from "./AirportSelect";
 import { useEffect, useRef, useState } from "react";
 import moment from "moment";
 
-export default function SearchFlightInput({ airports, values, onSearch }) {
+export default function SearchFlightInput({ airports, values, onSearch, user }) {
   const [origin, setOrigin] = useState(values?.origin);
   const [destination, setDestination] = useState(values?.destination);
   const [roundTrip, setRoundTrip] = useState(values?.roundTrip ?? true);
@@ -31,6 +31,13 @@ export default function SearchFlightInput({ airports, values, onSearch }) {
       formRef.current.setFieldValue("date", departureDate);
     }
   }, [roundTrip]);
+
+  useEffect(() => {
+    if (user && !origin) {
+      formRef.current.setFieldValue("origin", user.airport);
+      setOrigin(user.airport);
+    }
+  }, [user]);
 
   useEffect(() => {
     formRef.current.setFieldValue("origin", origin);
