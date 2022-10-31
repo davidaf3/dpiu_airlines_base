@@ -7,6 +7,7 @@ export default function FlightCard({
   flight,
   airports,
   airlines,
+  passengers,
   showSelect = true,
 }) {
   const navigate = useNavigate();
@@ -135,7 +136,11 @@ export default function FlightCard({
           <Row>
             <Button
               type="primary"
-              onClick={() => navigate(`/flights/buy_ticket/${flight.code}`)}
+              onClick={() =>
+                navigate(
+                  `/flights/buy_ticket?departure=${flight.code}&passengers=${passengers}`
+                )
+              }
             >
               Seleccionar
             </Button>

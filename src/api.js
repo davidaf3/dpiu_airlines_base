@@ -29,6 +29,7 @@ export async function getTicketHistory(supabase, user) {
       row: row.row,
       column: row.column,
       price: row.price,
+      departure: moment(row.departure),
     };
 
     if (flightsMap.has(flightKey)) {

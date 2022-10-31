@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { getTicketHistory, returnTickets } from "../api";
 import { Button, Table, Typography, Popconfirm, message } from "antd";
+import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import "./TicketHistory.css";
 
@@ -21,6 +22,7 @@ function updateFilter(filterRef, history, getter, mapper) {
 }
 
 export default function TicketHistory({ supabase, airports, airlines }) {
+  const now = moment();
   const navigate = useNavigate();
 
   const [history, setHistory] = useState([]);
@@ -69,7 +71,7 @@ export default function TicketHistory({ supabase, airports, airlines }) {
     flightsToDelete.forEach((flightIdx) => historyCopy.splice(flightIdx, 1));
     setHistory(historyCopy);
 
-    message.success("Se ha procesado la devolución con éxito.");
+    message.success("La devolución se ha procesado  con éxito.");
   };
 
   useEffect(() => {
@@ -222,9 +224,15 @@ export default function TicketHistory({ supabase, airports, airlines }) {
         >
           <Button
             className={clickedButton !== record.key ? "action" : undefined}
+            style={
+              record.departure.isBefore(now) ? { visibility: "hidden" } : {}
+            }
             type="link"
             danger
-            onClick={() => setClickedButton(record.key)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setClickedButton(record.key);
+            }}
           >
             <Link type="danger" underline>
               Devolver todos
@@ -253,7 +261,7 @@ export default function TicketHistory({ supabase, airports, airlines }) {
         title: "",
         dataIndex: "id",
         key: "actions",
-        render: (id) => (
+        render: (id, record) => (
           <Popconfirm
             placement="topRight"
             title={"¿Seguro que desea devolver este billete?"}
@@ -266,6 +274,9 @@ export default function TicketHistory({ supabase, airports, airlines }) {
           >
             <Button
               className={clickedButton !== id ? "action" : undefined}
+              style={
+                record.departure.isBefore(now) ? { visibility: "hidden" } : {}
+              }
               type="link"
               danger
               onClick={() => setClickedButton(id)}
@@ -281,6 +292,7 @@ export default function TicketHistory({ supabase, airports, airlines }) {
 
     return (
       <Table
+        style={{ marginLeft: "30%" }}
         columns={ticketColumns}
         dataSource={[...flight.tickets]}
         pagination={false}

@@ -12,10 +12,13 @@ class TicketBuyPassengers extends React.Component {
 
   constructor(props) {
     super(props)
-    this.code = this.props.params.code;
-    this.code_vuelta = undefined;
+
+    this.code = props.searchParams.get("departure");
+    this.code_vuelta = props.searchParams.has("return") ? 
+      props.searchParams.get("return") : undefined;
+
     this.user = "1dc61347-640b-465c-aa28-23868f0b8733";
-    this.numberOfPassengers = 1;
+    this.numberOfPassengers = props.searchParams.get("passengers");
     this.state = {
       flight: {},
       origin: {},

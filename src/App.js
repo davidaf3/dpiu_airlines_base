@@ -88,7 +88,7 @@ class App extends React.Component {
             element={<FlightDetails supabase={this.supabase} />}
           />
           <Route
-            path="/flights/buy_ticket/:code"
+            path="/flights/buy_ticket"
             element={<TicketBuyPassengers supabase={this.supabase} />}
           />
           <Route

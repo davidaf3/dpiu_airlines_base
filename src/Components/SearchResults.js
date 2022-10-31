@@ -115,6 +115,7 @@ export default function SearchResults({
                 trip={result}
                 airports={airports}
                 airlines={airlines}
+                passengers={search.passengers}
               ></RoundTripCard>
             </List.Item>
           ) : (
@@ -123,6 +124,7 @@ export default function SearchResults({
                 flight={result}
                 airports={airports}
                 airlines={airlines}
+                passengers={search.passengers}
                 showSelect={true}
               ></FlightCard>
             </List.Item>

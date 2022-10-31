@@ -2,7 +2,12 @@ import { Row, Col, Button, Typography, Divider } from "antd";
 import FlightCard from "./FlightCard";
 import { useNavigate } from "react-router-dom";
 
-export default function RoundTripCard({ trip, airports, airlines }) {
+export default function RoundTripCard({
+  trip,
+  airports,
+  airlines,
+  passengers,
+}) {
   const navigate = useNavigate();
 
   const { Title, Text } = Typography;
@@ -63,7 +68,7 @@ export default function RoundTripCard({ trip, airports, airlines }) {
             type="primary"
             onClick={() =>
               navigate(
-                `/flights/buy_ticket?departure=${trip.departure.code}&return=${trip.return.code}`
+                `/flights/buy_ticket?departure=${trip.departure.code}&return=${trip.return.code}&passengers=${passengers}`
               )
             }
           >
