@@ -5,6 +5,9 @@ import { serializeSearch } from "../searchSerialization";
 import { useEffect, useState } from "react";
 import { getAirports } from "../api";
 
+
+import ChangeFavouriteAirport from "./ChangeFavouriteAirport";
+
 export default function Home({ supabase }) {
   const navigate = useNavigate();
 
@@ -21,6 +24,8 @@ export default function Home({ supabase }) {
     });
   };
 
+  
+
   return (
     <div>
       <SearchFlightInput
@@ -28,6 +33,7 @@ export default function Home({ supabase }) {
         onSearch={searchFlights}
       ></SearchFlightInput>
       <GetCheapestFlights supabase={supabase}/>
+      <ChangeFavouriteAirport         airports={airports}/>
     </div>
   );
 }
