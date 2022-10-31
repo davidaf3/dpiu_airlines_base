@@ -127,7 +127,7 @@ class GetCheapestFlights extends React.Component {
       <Menu onClick={this.updateChosen} items={items}
       />
     );
-    return <Title level={3}>Viajes destacados desde
+    return <Title level={3}>
       <Dropdown overlay={menu}><a onClick={(e) => e.preventDefault()}>
         <Space> {this.state.name}<DownOutlined /></Space>
       </a>
@@ -137,9 +137,7 @@ class GetCheapestFlights extends React.Component {
   }
   render() {
     let array = []
-    array.push(<Divider></Divider>)
-    array.push(<Row span={5}>{this.generateDropDown()}</Row>)
-    array.push(<Divider></Divider>)
+    array.push(<Divider><Row span={5}><Title level={3}>Destinos más baratos desde {this.generateDropDown()}</Title></Row></Divider>)
     array.push(<Row span={5}>{this.generateColumns()}</Row>)
     return array
   }
