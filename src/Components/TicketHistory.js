@@ -39,7 +39,6 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
 
   const [expandedRows, setExpandedRows] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [clickedButton, setClickedButton] = useState("");
 
   const flightFilter = useRef([]);
   const originAirportFilter = useRef([]);
@@ -149,7 +148,11 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
       dataIndex: "code",
       key: "code",
       render: (code) => (
-        <Button type="link" onClick={() => navigate(`/flights/${code}`)}>
+        <Button
+          type="link"
+          title="Ver detalles del vuelo"
+          onClick={() => navigate(`/flights/${code}`)}
+        >
           <Link type="link" underline>
             {code}
           </Link>
@@ -219,6 +222,7 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
       title: "",
       dataIndex: "tickets",
       key: "actions",
+      align: "center",
       render: (tickets, record) => (
         <Popconfirm
           placement="topRight"
@@ -226,23 +230,16 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
             "¿Seguro que desea devolver todos los billetes de esta compra?"
           }
           onConfirm={() => onReturnTickets(tickets.map((ticket) => ticket.id))}
-          onOpenChange={(open) => {
-            if (!open) setClickedButton("");
-          }}
           okText="Sí"
           cancelText="No"
         >
           <Button
-            className={clickedButton !== record.key ? "action" : undefined}
             style={
               record.departure.isBefore(now) ? { visibility: "hidden" } : {}
             }
             type="link"
             danger
-            onClick={(e) => {
-              e.stopPropagation();
-              setClickedButton(record.key);
-            }}
+            onClick={(e) => e.stopPropagation()}
           >
             <Link type="danger" underline>
               Devolver todos
@@ -254,52 +251,6 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
   ];
 
   const ticketRowRender = (flight) => {
-    const ticketColumns = [
-      { title: "Nombre", dataIndex: "firstName", key: "firstName" },
-      { title: "Apellidos", dataIndex: "lastName", key: "lastName" },
-      { title: "Fila", dataIndex: "row", key: "row", align: "right" },
-      { title: "Columna", dataIndex: "column", key: "column", align: "right" },
-      {
-        title: "Precio",
-        dataIndex: "price",
-        key: "price",
-        render: (price) => `${price.toFixed(2).replace(".", ",")} €`,
-        sorter: (t1, t2) => t1.price - t2.price,
-        align: "right",
-      },
-      {
-        title: "",
-        dataIndex: "id",
-        key: "actions",
-        render: (id, record) => (
-          <Popconfirm
-            placement="topRight"
-            title={"¿Seguro que desea devolver este billete?"}
-            onConfirm={() => onReturnTickets([id])}
-            onOpenChange={(open) => {
-              if (!open) setClickedButton("");
-            }}
-            okText="Sí"
-            cancelText="No"
-          >
-            <Button
-              className={clickedButton !== id ? "action" : undefined}
-              style={
-                record.departure.isBefore(now) ? { visibility: "hidden" } : {}
-              }
-              type="link"
-              danger
-              onClick={() => setClickedButton(id)}
-            >
-              <Link type="danger" underline>
-                Devolver
-              </Link>
-            </Button>
-          </Popconfirm>
-        ),
-      },
-    ];
-
     const items = [];
     flight.tickets.forEach((ticket) => {
       items.push(
@@ -324,23 +275,6 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
         </Descriptions.Item>
       );
     });
-
-    /*return (
-      <Descriptions
-        bordered
-        size={"middle"}
-        contentStyle={{ backgroundColor: "white" }}
-        column={4}
-      >
-        {items}
-      </Descriptions>
-    );
-    <Table
-        style={{ marginLeft: "20%" }}
-        columns={ticketColumns}
-        dataSource={[...flight.tickets]}
-        pagination={false}
-      />*/
 
     return (
       <Row style={{ width: "100%" }} className="detailContainer">
@@ -400,14 +334,10 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
                 placement="topRight"
                 title={"¿Seguro que desea devolver este billete?"}
                 onConfirm={() => onReturnTickets([ticket.id])}
-                onOpenChange={(open) => {
-                  if (!open) setClickedButton("");
-                }}
                 okText="Sí"
                 cancelText="No"
               >
                 <Button
-                  className={clickedButton !== ticket.id ? "action" : undefined}
                   style={
                     flight.departure.isBefore(now)
                       ? { visibility: "hidden" }
@@ -415,7 +345,6 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
                   }
                   type="link"
                   danger
-                  onClick={() => setClickedButton(ticket.id)}
                 >
                   <Link type="danger" underline>
                     Devolver
