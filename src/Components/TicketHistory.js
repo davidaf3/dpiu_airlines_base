@@ -1,6 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { getTicketHistory, returnTickets } from "../api";
-import { Button, Table, Typography, Popconfirm, message } from "antd";
+import {
+  Button,
+  Table,
+  Typography,
+  Popconfirm,
+  message,
+  Descriptions,
+  Row,
+  Col,
+} from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import "./TicketHistory.css";
@@ -75,18 +84,21 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
   };
 
   useEffect(() => {
-    getTicketHistory(supabase, user.id).then((newHistory) => {
-      setHistory(newHistory);
-      updateFilter(
-        flightFilter,
-        newHistory,
-        (flight) => flight.code,
-        (code) => ({ text: code, value: code })
-      );
-      if (newHistory.length > 0) setExpandedRows([newHistory[0].key]);
-      setLoading(false);
-    });
-  }, [supabase]);
+    if (!user) return;
+    getTicketHistory(supabase, "1dc61347-640b-465c-aa28-23868f0b8733").then(
+      (newHistory) => {
+        setHistory(newHistory);
+        updateFilter(
+          flightFilter,
+          newHistory,
+          (flight) => flight.code,
+          (code) => ({ text: code, value: code })
+        );
+        if (newHistory.length > 0) setExpandedRows([newHistory[0].key]);
+        setLoading(false);
+      }
+    );
+  }, [supabase, user]);
 
   useEffect(() => {
     const mapper = (airport) => ({
@@ -288,13 +300,91 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
       },
     ];
 
-    return (
-      <Table
+    const items = [];
+    flight.tickets.forEach((ticket) => {
+      items.push(
+        <Descriptions.Item label="Pasajero" key={"passenger" + ticket.id}>
+          {ticket.firstName} {ticket.lastName}
+        </Descriptions.Item>
+      );
+      items.push(
+        <Descriptions.Item label="Asiento" key={"seat" + ticket.id}>
+          {ticket.row}
+          {ticket.column}
+        </Descriptions.Item>
+      );
+      items.push(
+        <Descriptions.Item label="Precio" key={"price" + ticket.id}>
+          {ticket.price} €
+        </Descriptions.Item>
+      );
+      items.push(
+        <Descriptions.Item key={"actions" + ticket.id}>
+          Devolver
+        </Descriptions.Item>
+      );
+    });
+
+    /*return (
+      <Descriptions
+        bordered
+        size={"middle"}
+        contentStyle={{ backgroundColor: "white" }}
+        column={4}
+      >
+        {items}
+      </Descriptions>
+    );
+    <Table
         style={{ marginLeft: "20%" }}
         columns={ticketColumns}
         dataSource={[...flight.tickets]}
         pagination={false}
-      />
+      />*/
+
+    return (
+      <Row style={{width: "100%"}}>
+        <Col span={3}>
+          {flight.tickets.map((ticket) => (
+            <Row key={"passengerLabel" + ticket.id}>Pasajero</Row>
+          ))}
+        </Col>
+        <Col span={3}>
+          {flight.tickets.map((ticket) => (
+            <Row key={"passenger" + ticket.id}>
+              {ticket.firstName} {ticket.lastName}
+            </Row>
+          ))}
+        </Col>
+        <Col span={3}>
+          {flight.tickets.map((ticket) => (
+            <Row key={"seatLabel" + ticket.id}>Asiento</Row>
+          ))}
+        </Col>
+        <Col span={3}>
+          {flight.tickets.map((ticket) => (
+            <Row key={"seat" + ticket.id}>
+              {ticket.row}
+              {ticket.column}
+            </Row>
+          ))}
+        </Col>
+        <Col span={3}>
+          {flight.tickets.map((ticket) => (
+            <Row key={"priceLabel" + ticket.id}>Precio</Row>
+          ))}
+        </Col>
+        <Col span={3}>
+          {flight.tickets.map((ticket) => (
+            <Row key={"price" + ticket.id}>{ticket.price} €</Row>
+          ))}
+        </Col>
+        <Col span={3}>
+          {flight.tickets.map((ticket) => (
+            <Row key={"actions" + ticket.id}>Devolver</Row>
+          ))}
+        </Col>
+      </Row>
     );
   };
 
