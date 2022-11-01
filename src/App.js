@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import LoginForm from "./Components/LoginForm";
 import { Route, Routes, Link } from "react-router-dom";
 
-import { Layout, Menu, Col, Row } from "antd";
+import { Layout, Menu, Col, Row, Avatar } from "antd";
 import {
   UserAddOutlined,
   LoginOutlined,
@@ -66,6 +66,7 @@ class App extends React.Component {
     this.setState({
       user: {
         id: user.id,
+        email: user.email,
         airport,
       },
     });
@@ -144,6 +145,11 @@ class App extends React.Component {
             <Col style={{ marginRight: "auto", width: "80%" }}>
               <Menu theme="dark" mode="horizontal" items={menuItems}></Menu>
             </Col>
+            {this.state.user && (
+              <Col>
+                <Avatar>{this.state.user.email[0]}</Avatar>
+              </Col>
+            )}
           </Row>
         </Header>
 
@@ -161,6 +167,7 @@ class App extends React.Component {
               element={
                 <LoginForm
                   callBackOnFinishLoginForm={this.callBackOnFinishLoginForm}
+                  showTitle={true}
                   redirectHome={true}
                 />
               }

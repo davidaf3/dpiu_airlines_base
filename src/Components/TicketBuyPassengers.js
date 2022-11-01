@@ -628,6 +628,7 @@ getContentAccordingToProgress() {
     <LoginForm
       callBackOnFinishLoginForm={this.doCallback.bind(this)}
       redirectHome={false}
+      showTitle={false}
     />
   </Modal>)
     array.push(<Row justify="center"><Col><Title level={3}> Precio total: <Text type="success">{this.totalPrice + " €"}</Text></Title></Col><Col><Button onClick={() => { this.comprarTickets() }} type="primary">Comprar billetes</Button></Col></Row>)
