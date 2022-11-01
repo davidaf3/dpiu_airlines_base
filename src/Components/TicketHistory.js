@@ -343,27 +343,34 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
       />*/
 
     return (
-      <Row style={{width: "100%"}}>
+      <Row style={{ width: "100%" }} className="detailContainer">
         <Col span={3}>
           {flight.tickets.map((ticket) => (
-            <Row key={"passengerLabel" + ticket.id}>Pasajero</Row>
+            <Row key={"passengerLabel" + ticket.id} className="detailLabel">
+              Pasajero
+            </Row>
           ))}
         </Col>
-        <Col span={3}>
+        <Col span={6}>
           {flight.tickets.map((ticket) => (
-            <Row key={"passenger" + ticket.id}>
+            <Row key={"passenger" + ticket.id} className="detailValue">
               {ticket.firstName} {ticket.lastName}
             </Row>
           ))}
         </Col>
         <Col span={3}>
           {flight.tickets.map((ticket) => (
-            <Row key={"seatLabel" + ticket.id}>Asiento</Row>
+            <Row key={"seatLabel" + ticket.id} className="detailLabel">
+              Asiento
+            </Row>
           ))}
         </Col>
         <Col span={3}>
           {flight.tickets.map((ticket) => (
-            <Row key={"seat" + ticket.id}>
+            <Row
+              key={"seat" + ticket.id}
+              className="detailValue detailValueNumber"
+            >
               {ticket.row}
               {ticket.column}
             </Row>
@@ -371,17 +378,51 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
         </Col>
         <Col span={3}>
           {flight.tickets.map((ticket) => (
-            <Row key={"priceLabel" + ticket.id}>Precio</Row>
+            <Row key={"priceLabel" + ticket.id} className="detailLabel">
+              Precio
+            </Row>
           ))}
         </Col>
         <Col span={3}>
           {flight.tickets.map((ticket) => (
-            <Row key={"price" + ticket.id}>{ticket.price} €</Row>
+            <Row
+              key={"price" + ticket.id}
+              className="detailValue detailValueNumber"
+            >
+              {ticket.price} €
+            </Row>
           ))}
         </Col>
         <Col span={3}>
           {flight.tickets.map((ticket) => (
-            <Row key={"actions" + ticket.id}>Devolver</Row>
+            <Row key={"actions" + ticket.id} className="detailLabel">
+              <Popconfirm
+                placement="topRight"
+                title={"¿Seguro que desea devolver este billete?"}
+                onConfirm={() => onReturnTickets([ticket.id])}
+                onOpenChange={(open) => {
+                  if (!open) setClickedButton("");
+                }}
+                okText="Sí"
+                cancelText="No"
+              >
+                <Button
+                  className={clickedButton !== ticket.id ? "action" : undefined}
+                  style={
+                    flight.departure.isBefore(now)
+                      ? { visibility: "hidden" }
+                      : {}
+                  }
+                  type="link"
+                  danger
+                  onClick={() => setClickedButton(ticket.id)}
+                >
+                  <Link type="danger" underline>
+                    Devolver
+                  </Link>
+                </Button>
+              </Popconfirm>
+            </Row>
           ))}
         </Col>
       </Row>

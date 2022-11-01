@@ -1,7 +1,40 @@
-.ant-table-row .action {
+.ant-table-row .action, .detailContainer .action {
   visibility: hidden;
 }
 
-.ant-table-row:hover .action {
+.ant-table-row:hover .action, .detailContainer:hover .action  {
   visibility: visible;
+}
+
+.detailContainer {
+  border: 1px solid #f0f0f0;
+}
+
+.detailContainer .ant-col {
+  border-right: 1px solid #f0f0f0;
+}
+
+.detailContainer .ant-col:last-child {
+  border-right: none;
+}
+
+.detailValue {
+  background-color: white;
+}
+
+.detailValue, .detailLabel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2.8em;
+  padding: 0em 1em;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.detailValue.detailValueNumber {
+  justify-content: flex-end;
+}
+
+.detailValue:last-child, .detailLabel:last-child {
+  border-bottom: none;
 }
