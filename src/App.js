@@ -148,6 +148,7 @@ class App extends React.Component {
               element={
                 <LoginForm
                   callBackOnFinishLoginForm={this.callBackOnFinishLoginForm}
+                  redirectHome={true}
                 />
               }
             />
@@ -190,6 +191,8 @@ class App extends React.Component {
                 <TicketBuyPassengers
                   supabase={this.supabase}
                   user={this.state.user}
+                  callBackOnFinishLoginForm={this.callBackOnFinishLoginForm}
+                  
                 />
               }
             />

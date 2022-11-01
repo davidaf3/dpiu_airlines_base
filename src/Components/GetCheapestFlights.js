@@ -2,8 +2,6 @@ import React from 'react';
 import withRouter from './withRouter';
 import { Dropdown, Menu, Space, Card, Row, Col, Button, Typography, Divider, Modal } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-import LoginForm from "./LoginForm";
-import ModalLogin from "./LoginForm";
 const { Text, Title } = Typography;
 
 class GetCheapestFlights extends React.Component {
@@ -15,7 +13,6 @@ class GetCheapestFlights extends React.Component {
       airports: {},
       chosen: undefined,
       name: "Todos los aeropuertos",
-      isModalOpen: false
     }
     this.getAirports();
   }
@@ -69,19 +66,8 @@ class GetCheapestFlights extends React.Component {
     }
   }
 
-  clickFlight(flight) {
+  clickFlight(flight) { 
     this.props.navigate(`/flights/buy_ticket?departure=${flight.code}&passengers=1`)
-    console.log(this.props.user)
-    /*
-    if (this.props.user != null) {
-      this.props.navigate(`/flights/buy_ticket?departure=${flight.code}&passengers=1`)
-    } else {
-      console.log(this.state.user)
-      this.setState({
-        isModalOpen: true
-      })
-    }
-    */
   }
 
   generateColumns() {
@@ -154,33 +140,9 @@ class GetCheapestFlights extends React.Component {
 
   }
 
-  callBackOnFinishLoginForm = async (loginUser) => {
-    this.closeModal();
-    const { data, error } = await this.props.supabase.auth.signInWithPassword({
-      email: loginUser.email,
-      password: loginUser.password,
-    });
-
-    if (error == null && data.user != null) {
-      this.onNewUser(data.user);
-    }
-    this.forceUpdate();
-  };
-
-  closeModal() {
-    this.setState({ isModalOpen: false })
-  }
 
   render() {
     let array = []
-
-    array.push(<Modal title="Inicia sesión para continuar" open={this.state.isModalOpen} onOk={() => this.closeModal()} onCancel={() => this.closeModal()} footer={null}>
-      <LoginForm
-        callBackOnFinishLoginForm={this.callBackOnFinishLoginForm}
-      />
-    </Modal>)
-
-    //array.push(<ModalLogin open={this.state.isModalOpen}></ModalLogin>)
     array.push(<Divider><Row span={5}><Title level={3}>Destinos más baratos desde {this.generateDropDown()}</Title></Row></Divider>)
     array.push(<Row justify="center" gutter={2}>{this.generateColumns()}</Row>)
     return array

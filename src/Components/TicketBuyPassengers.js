@@ -1,17 +1,18 @@
 import React from 'react';
 import withRouter from './withRouter';
-import { Card, Row, Col, Descriptions, Button, Steps, PageHeader, AutoComplete, Form, Input, Collapse, Typography, Tooltip, Result, notification, Checkbox, Table, Divider } from 'antd';
+import LoginForm from "./LoginForm";
+import { Modal, Card, Row, Col, Descriptions, Button, Steps, PageHeader, AutoComplete, Form, Input, Collapse, Typography, Tooltip, Result, notification, Checkbox, Table, Divider } from 'antd';
 const { Step } = Steps;
 const { Meta } = Card;
 const { Panel } = Collapse;
 const { Text, Title } = Typography;
 
 
-
 class TicketBuyPassengers extends React.Component {
 
   constructor(props) {
     super(props)
+    
 
     this.code = props.searchParams.get("departure");
     this.code_vuelta = props.searchParams.has("return") ? 
@@ -36,7 +37,8 @@ class TicketBuyPassengers extends React.Component {
       airline2: {},
       tickets2: {},
       discount: {},
-      resaltarAsientosBaratos:false
+      resaltarAsientosBaratos:false,
+      isModalOpen: false
     }
     this.passengers = []
     this.tickets = []
@@ -617,10 +619,17 @@ getContentAccordingToProgress() {
     ];  
   
     array.push(<Table columns={columns} dataSource={this.tickets} />)
+    this.totalPrice = 0;
     for (var i = 0; i < this.tickets.length; i++) {
       this.totalPrice += this.tickets[i].price;
     }
     array.push(<Divider></Divider>)
+    array.push(<Modal title="Inicia sesión para continuar" open={this.state.isModalOpen} onOk={() => this.closeModal()} onCancel={() => this.closeModal()} footer={null}>
+    <LoginForm
+      callBackOnFinishLoginForm={this.doCallback.bind(this)}
+      redirectHome={false}
+    />
+  </Modal>)
     array.push(<Row justify="center"><Col><Title level={3}> Precio total: <Text type="success">{this.totalPrice + " €"}</Text></Title></Col><Col><Button onClick={() => { this.comprarTickets() }} type="primary">Comprar billetes</Button></Col></Row>)
 
     
@@ -642,14 +651,31 @@ getContentAccordingToProgress() {
   return array
 }
 
+doCallback(loginUser) {
+  this.props.callBackOnFinishLoginForm(loginUser);
+  debugger
+  this.closeModal();
+}
+
+  closeModal() {
+    this.setState({ isModalOpen: false })
+  }
 
 
 comprarTickets() {
-  for (var i = 0; i < this.tickets.length; i++) {
-    this.tickets[i].user = this.user;
-    this.sendCreateTicket(this.tickets[i]);
+  if (this.props.user != null) {
+    for (var i = 0; i < this.tickets.length; i++) {
+      this.tickets[i].user = this.props.user;
+      this.sendCreateTicket(this.tickets[i]);
+    }
+    this.modifyProgress(1);
+  } else {
+    this.setState({
+      isModalOpen: true
+    })
   }
-  this.modifyProgress(1);
+
+
 }
 
 calculateDiscount(values) {
@@ -666,12 +692,12 @@ async sendCreateTicket(values){
 
 
 
-  if (this.user != null){
+  if (this.props.user != null){
   const { data, error } = await this.props.supabase
     .from('ticket')
     .insert([
        { 
-          user: this.user, 
+          user: this.props.user.id, 
           first_name: values.first_name,
           last_name: values.last_name,
           row: values.row,

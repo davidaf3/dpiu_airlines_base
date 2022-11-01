@@ -3,12 +3,17 @@ import { Button, Form, Input } from "antd";
 import withRouter from "./withRouter";
 
 class LoginForm extends React.Component {
+
+  
+
   sendLogin(values) {
     this.props.callBackOnFinishLoginForm({
       email: values.email,
       password: values.password,
     }).then(() => {
-      this.props.navigate("/")
+      if (this.props.redirectHome) {
+        this.props.navigate("/")
+      }
     });
   }
 
