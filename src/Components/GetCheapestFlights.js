@@ -72,7 +72,8 @@ class GetCheapestFlights extends React.Component {
   clickFlight(flight) {
     this.props.navigate(`/flights/buy_ticket?departure=${flight.code}&passengers=1`)
     console.log(this.props.user)
-    if (this.user != null) {
+    /*
+    if (this.props.user != null) {
       this.props.navigate(`/flights/buy_ticket?departure=${flight.code}&passengers=1`)
     } else {
       console.log(this.state.user)
@@ -80,6 +81,7 @@ class GetCheapestFlights extends React.Component {
         isModalOpen: true
       })
     }
+    */
   }
 
   generateColumns() {

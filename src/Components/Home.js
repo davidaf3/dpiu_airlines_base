@@ -20,9 +20,11 @@ export default function Home({ supabase, airports, user }) {
 
   const showFavouriteAirport = () => {
     let array = []
-    //EOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-    array.push(<Divider><Typography.Text>Selecciona tu aeropuerto favorito y te quedará guardado</Typography.Text></Divider>)
-    array.push(<Row justify="center"><ChangeFavouriteAirport supabase={supabase} airports={airports} user={user} /></Row>)
+    console.log({user})
+    if ({user} != null) {
+      array.push(<Divider><Typography.Text>Selecciona tu aeropuerto favorito y te quedará guardado</Typography.Text></Divider>)
+      array.push(<Row justify="center"><ChangeFavouriteAirport supabase={supabase} airports={airports} user={user} /></Row>)
+    }
     return array
   };
 
