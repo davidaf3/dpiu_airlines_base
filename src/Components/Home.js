@@ -2,8 +2,6 @@ import SearchFlightInput from "./SearchFlightInput";
 import GetCheapestFlights from "./GetCheapestFlights";
 import { useNavigate } from "react-router-dom";
 import { serializeSearch } from "../searchSerialization";
-import { useEffect, useState } from "react";
-import { getAirports } from "../api";
 
 import ChangeFavouriteAirport from "./ChangeFavouriteAirport";
 import { Divider, Typography, Row } from "antd";

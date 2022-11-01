@@ -100,7 +100,7 @@ class App extends React.Component {
         key: "logo",
         label: (
           <Link to="/">
-            <img src="/dpiu_airlines/logo.svg" width="40" height="40" />
+            <img src="/dpiu_airlines/logo.svg" alt="logo" width="40" height="40" />
           </Link>
         ),
       },
@@ -172,7 +172,12 @@ class App extends React.Component {
             <Route
               path="/flights/search"
               element={
-                <SearchFlight supabase={this.supabase} user={this.state.user} />
+                <SearchFlight
+                  airports={this.state.airports}
+                  airlines={this.state.airlines}
+                  supabase={this.supabase}
+                  user={this.state.user}
+                />
               }
             />
             <Route

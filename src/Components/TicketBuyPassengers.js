@@ -17,8 +17,8 @@ class TicketBuyPassengers extends React.Component {
     this.code_vuelta = props.searchParams.has("return") ? 
       props.searchParams.get("return") : undefined;
 
-    //this.user = props.user.id;
-    this.user = "1dc61347-640b-465c-aa28-23868f0b8733"
+    this.user = props.user?.id;
+    //this.user = "1dc61347-640b-465c-aa28-23868f0b8733"
     this.numberOfPassengers = props.searchParams.get("passengers");
     this.state = {
       flight: {},
