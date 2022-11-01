@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { getAirports } from "../api";
 
 import ChangeFavouriteAirport from "./ChangeFavouriteAirport";
+import { Divider, Typography, Row } from "antd";
 
 export default function Home({ supabase, airports, user }) {
   const navigate = useNavigate();
@@ -17,15 +18,25 @@ export default function Home({ supabase, airports, user }) {
     });
   };
 
-  return (
+  const showFavouriteAirport = () => {
+    let array = []
+    //EOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+    array.push(<Divider><Typography.Text>Selecciona tu aeropuerto favorito y te quedará guardado</Typography.Text></Divider>)
+    array.push(<Row justify="center"><ChangeFavouriteAirport supabase={supabase} airports={airports} user={user} /></Row>)
+    return array
+  };
+
+  return ( 
     <div>
       <SearchFlightInput
         airports={airports}
         onSearch={searchFlights}
         user={user}
       ></SearchFlightInput>
-      <GetCheapestFlights supabase={supabase} />
-      <ChangeFavouriteAirport supabase={supabase} airports={airports} user={user} />
+      {showFavouriteAirport()}
+      <GetCheapestFlights supabase={supabase} user ={user}/>
+
+
     </div>
   );
 }

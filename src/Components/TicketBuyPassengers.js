@@ -17,7 +17,8 @@ class TicketBuyPassengers extends React.Component {
     this.code_vuelta = props.searchParams.has("return") ? 
       props.searchParams.get("return") : undefined;
 
-    this.user = props.user.id;
+    //this.user = props.user.id;
+    this.user = "1dc61347-640b-465c-aa28-23868f0b8733"
     this.numberOfPassengers = props.searchParams.get("passengers");
     this.state = {
       flight: {},
@@ -486,7 +487,7 @@ seatPassenger() {
 
 getCheapestTickets() {
   return <Checkbox onChange={this.updateSeatButtons.bind(this)}>Resaltar asientos más baratos</Checkbox>
-  //return <Button onClick={this.updateSeatButtons()}>Resaltar asientos más baratos</Button>
+
 }
 
 
@@ -522,8 +523,8 @@ getContentAccordingToProgress() {
   if (this.state.progress == 1) {
 
     array.push(<Form onFinish={values => this.getPassengers(values)}><Collapse defaultActiveKey={['1']}>{this.createPassengerForms()}</Collapse>
-      <Button> Cambiar búsqueda</Button>
-      <Button htmlType="submit" type="primary">Siguiente</Button></Form>)
+      <Row justify="center"><Col> <Button onClick={() => this.props.navigate("/")}> Cambiar búsqueda</Button></Col><Col><Button htmlType="submit" type="primary">Siguiente</Button></Col></Row></Form>)
+
 
   } else if (this.state.progress == 2) {
 
@@ -620,8 +621,8 @@ getContentAccordingToProgress() {
       this.totalPrice += this.tickets[i].price;
     }
     array.push(<Divider></Divider>)
-    array.push(<Title level={3}> Precio total: <Text type="success">{this.totalPrice + " €"}</Text></Title>)
-    array.push(<Button onClick={() => { this.comprarTickets() }} type="primary">Comprar billetes</Button>)
+    array.push(<Row justify="center"><Col><Title level={3}> Precio total: <Text type="success">{this.totalPrice + " €"}</Text></Title></Col><Col><Button onClick={() => { this.comprarTickets() }} type="primary">Comprar billetes</Button></Col></Row>)
+
     
 
   } else if (this.state.progress == 5) {
@@ -760,7 +761,7 @@ getFlightInformation() {
     </PageHeader>
   } else {
     return <PageHeader title="Información de los vuelos" extra={[
-      <Button>Cambiar búsqueda</Button>]}>
+      <Button onClick={() => this.props.navigate("/")}>Cambiar búsqueda</Button>]}>
 
       <Descriptions title="Vuelo de ida" size="small" column={2}>
         <Descriptions.Item label="Origen"><Text strong>{this.state.origin.city}</Text></Descriptions.Item>

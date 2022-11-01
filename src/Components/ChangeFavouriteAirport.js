@@ -35,12 +35,12 @@ export default function ChangeFavouriteAirport({ supabase, airports, user }) {
       layout="vertical"
     >
       <Row align="bottom">
-        <Col span={5}>
-          <Form.Item name="fav" label="Aeropuerto favorito">
+        <Col >
+          <Form.Item name="fav" >
             <AirportSelect key="fav" airports={airports} />
           </Form.Item>
         </Col>
-        <Col span={1}>
+        <Col >
           <Form.Item>
             <Button type="primary" htmlType="submit" title="Seleccionar" block>
               Seleccionar

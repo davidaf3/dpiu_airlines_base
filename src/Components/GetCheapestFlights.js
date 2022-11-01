@@ -1,7 +1,9 @@
 import React from 'react';
 import withRouter from './withRouter';
-import { Dropdown, Menu, Space, Card, Row, Col, Button, Typography, Divider } from 'antd';
+import { Dropdown, Menu, Space, Card, Row, Col, Button, Typography, Divider, Modal } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
+import LoginForm from "./LoginForm";
+import ModalLogin from "./LoginForm";
 const { Text, Title } = Typography;
 
 class GetCheapestFlights extends React.Component {
@@ -12,7 +14,8 @@ class GetCheapestFlights extends React.Component {
       flights: {},
       airports: {},
       chosen: undefined,
-      name: "Todos los aeropuertos"
+      name: "Todos los aeropuertos",
+      isModalOpen: false
     }
     this.getAirports();
   }
@@ -66,21 +69,34 @@ class GetCheapestFlights extends React.Component {
     }
   }
 
+  clickFlight(flight) {
+    this.props.navigate(`/flights/buy_ticket?departure=${flight.code}&passengers=1`)
+    console.log(this.props.user)
+    if (this.user != null) {
+      this.props.navigate(`/flights/buy_ticket?departure=${flight.code}&passengers=1`)
+    } else {
+      console.log(this.state.user)
+      this.setState({
+        isModalOpen: true
+      })
+    }
+  }
+
   generateColumns() {
     let array = []
     if (this.state.chosen == undefined) {
       for (let i = 0; i < this.state.flights.length; i++) {
-        array.push(<Col span={6}>
+        array.push(<Col gutter={16} span={6}>
           <Card title={"Vuelo desde " + this.getNameCity(this.state.flights[i].origin) + " a " + this.getNameCity(this.state.flights[i].destination)} hoverable style={{ width: 350, }} cover={<img alt="example" src={"https://gfhyobdofzshidbbnaxf.supabase.co/storage/v1/object/public/cities/" + this.state.flights[i].destination + ".png"} />}>
-            <Button type="primary" onClick={() => { }} >{"Billetes desde " + this.state.flights[i].base_price + " €"}</Button>
+            <Button type="primary" onClick={() => this.clickFlight(this.state.flights[i])} >{"Billetes desde " + this.state.flights[i].base_price + " €"}</Button>
           </Card>
         </Col>)
       }
     } else {
       for (let i = 0; i < this.state.flights.length; i++) {
-        array.push(<Col span={6}>
+        array.push(<Col gutter={16} span={6}>
           <Card title={"Vuelo a " + this.getNameCity(this.state.flights[i].destination)} hoverable style={{ width: 350, }} cover={<img alt="example" src={"https://gfhyobdofzshidbbnaxf.supabase.co/storage/v1/object/public/cities/" + this.state.flights[i].destination + ".png"} />}>
-            <Button type="primary" onClick={() => { }} >{"Billetes desde " + this.state.flights[i].base_price + " €"}</Button>
+            <Button type="primary" onClick={() => this.clickFlight(this.state.flights[i])} >{"Billetes desde " + this.state.flights[i].base_price + " €"}</Button>
           </Card>
         </Col>)
       }
@@ -122,7 +138,7 @@ class GetCheapestFlights extends React.Component {
       item.label = (<Text>{this.state.airports[i].city}</Text>)
       items.push(item);
     }
-    items.push({ key: this.state.airports.length, label: <Text>Todos los aeropuertos</Text>})
+    items.push({ key: this.state.airports.length, label: <Text>Todos los aeropuertos</Text> })
     const menu = (
       <Menu onClick={this.updateChosen} items={items}
       />
@@ -135,10 +151,36 @@ class GetCheapestFlights extends React.Component {
     </Title>
 
   }
+
+  callBackOnFinishLoginForm = async (loginUser) => {
+    this.closeModal();
+    const { data, error } = await this.props.supabase.auth.signInWithPassword({
+      email: loginUser.email,
+      password: loginUser.password,
+    });
+
+    if (error == null && data.user != null) {
+      this.onNewUser(data.user);
+    }
+    this.forceUpdate();
+  };
+
+  closeModal() {
+    this.setState({ isModalOpen: false })
+  }
+
   render() {
     let array = []
+
+    array.push(<Modal title="Inicia sesión para continuar" open={this.state.isModalOpen} onOk={() => this.closeModal()} onCancel={() => this.closeModal()} footer={null}>
+      <LoginForm
+        callBackOnFinishLoginForm={this.callBackOnFinishLoginForm}
+      />
+    </Modal>)
+
+    //array.push(<ModalLogin open={this.state.isModalOpen}></ModalLogin>)
     array.push(<Divider><Row span={5}><Title level={3}>Destinos más baratos desde {this.generateDropDown()}</Title></Row></Divider>)
-    array.push(<Row span={5}>{this.generateColumns()}</Row>)
+    array.push(<Row justify="center" gutter={2}>{this.generateColumns()}</Row>)
     return array
   }
 }
