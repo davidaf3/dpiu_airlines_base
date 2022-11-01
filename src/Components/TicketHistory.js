@@ -84,7 +84,7 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
 
   useEffect(() => {
     if (!user) return;
-    getTicketHistory(supabase, "1dc61347-640b-465c-aa28-23868f0b8733").then(
+    getTicketHistory(supabase, user.id).then(
       (newHistory) => {
         setHistory(newHistory);
         updateFilter(
@@ -303,9 +303,9 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
           {flight.tickets.map((ticket) => (
             <Row
               key={"seat" + ticket.id}
-              className="detailValue detailValueNumber"
+              className="detailValue"
             >
-              {ticket.row}
+              {String.fromCharCode(ticket.row + 65)}
               {ticket.column}
             </Row>
           ))}

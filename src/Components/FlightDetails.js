@@ -119,7 +119,7 @@ class FlightDetails extends React.Component {
         if (row == 1) {
           price += 30;
         }
-        return <Tooltip placement="top" title={price + " €"}><Col span={1}><Button onClick={() => { this.addTicket(row, column, price) }} style={{ width: "100%" }}>{numberOfSeat}</Button></Col></Tooltip>
+        return <Tooltip placement="top" title={price + " €"}><Col span={2}><Button onClick={() => { this.addTicket(row, column, price) }} style={{ width: "100%" }}>{numberOfSeat}</Button></Col></Tooltip>
       }
     
       createRowSeat = (j, numberOfSeat) => {
@@ -143,11 +143,11 @@ class FlightDetails extends React.Component {
           if (reserved == 0) {
             array.push(this.placeSeat(row, i, numberOfSeat))
           } else if (reserved == 1) {
-            array.push(<Tooltip placement="top" title="Ya reservada"><Col span={1}><Button style={{ width: "100%" }} disabled>X</Button></Col></Tooltip>)
+            array.push(<Tooltip placement="top" title="Ya reservada"><Col span={2}><Button style={{ width: "100%" }} disabled>X</Button></Col></Tooltip>)
           }
     
           if (i == half_length) {
-            array.push(<Col span={1}><Button style={{ width: "100%" }}></Button></Col>)
+            array.push(<Col span={2}><Button style={{ width: "100%" }}></Button></Col>)
           }
           numberOfSeat += 1;
           reserved = 0;
@@ -159,19 +159,19 @@ class FlightDetails extends React.Component {
         const array = []
         var numberOfSeat = 1
         array.push(<Row style={{ width: "80%", marginBottom: "1em" }}>
-          <Col align="middle" span={1}></Col>
-          <Col align="middle" span={1}><Typography.Text>A</Typography.Text></Col>
-          <Col align="middle" span={1}><Typography.Text>B</Typography.Text></Col>
-          <Col align="middle" span={1}><Typography.Text>C</Typography.Text></Col>
-          <Col align="middle" span={1}></Col>
-          <Col align="middle" span={1}><Typography.Text>D</Typography.Text></Col>
-          <Col align="middle" span={1}><Typography.Text>E</Typography.Text></Col>
-          <Col align="middle" span={1}><Typography.Text>F</Typography.Text></Col>
+          <Col align="middle" span={2}></Col>
+          <Col align="middle" span={2}><Typography.Text>A</Typography.Text></Col>
+          <Col align="middle" span={2}><Typography.Text>B</Typography.Text></Col>
+          <Col align="middle" span={2}><Typography.Text>C</Typography.Text></Col>
+          <Col align="middle" span={2}></Col>
+          <Col align="middle" span={2}><Typography.Text>D</Typography.Text></Col>
+          <Col align="middle" span={2}><Typography.Text>E</Typography.Text></Col>
+          <Col align="middle" span={2}><Typography.Text>F</Typography.Text></Col>
         </Row>);
     
     
         for (var i = 1; i <= this.state.plane.rows; i++) {
-          array.push(<Row style={{ width: "80%", marginBottom: "1em" }}><Col align="middle" span={1}><Typography.Text>{i}</Typography.Text></Col>{this.createRowSeat(i, numberOfSeat)}</Row>);
+          array.push(<Row style={{ width: "80%", marginBottom: "1em" }}><Col align="middle" span={2}><Typography.Text>{i}</Typography.Text></Col>{this.createRowSeat(i, numberOfSeat)}</Row>);
           numberOfSeat += this.state.plane.columns
         }
     
@@ -181,21 +181,18 @@ class FlightDetails extends React.Component {
 
     render() { 
       return (
-        <div>
-            <Descriptions title = "Detalles del vuelo" bordered>
-              <Descriptions.Item label ="Código del vuelo" span = {3}>{ this.state.flight.code }</Descriptions.Item>
-              <Descriptions.Item label ="Aeropuerto de origen">{ this.state.origin.name }</Descriptions.Item>
-              <Descriptions.Item label ="Ciudad">{ this.state.origin.city }</Descriptions.Item>
-              <Descriptions.Item label ="Hora de salida">{ this.state.flight.departure }</Descriptions.Item>
-              <Descriptions.Item label ="Aeropuerto de destino">{ this.state.destination.name }</Descriptions.Item>
-              <Descriptions.Item label ="Ciudad">{ this.state.destination.city }</Descriptions.Item>
-              <Descriptions.Item label ="Hora de llegada">{ this.state.flight.arrival }</Descriptions.Item>
-              <Descriptions.Item label ="Aerolínea" span = {2}>{ this.state.airline.name }</Descriptions.Item>
-              <Descriptions.Item label ="Modelo del avión">{ this.state.plane.name }</Descriptions.Item>
-              <Descriptions.Item label ="Asientos" span = {3}>{this.createSeats()}</Descriptions.Item>
-            </Descriptions>
-            
-        </div>
+        <Descriptions title = "Detalles del vuelo" bordered contentStyle={{backgroundColor: "white"}}>
+          <Descriptions.Item label ="Código del vuelo" span = {3}>{ this.state.flight.code }</Descriptions.Item>
+          <Descriptions.Item label ="Aeropuerto de origen">{ this.state.origin.name }</Descriptions.Item>
+          <Descriptions.Item label ="Ciudad">{ this.state.origin.city }</Descriptions.Item>
+          <Descriptions.Item label ="Hora de salida">{ this.state.flight.departure }</Descriptions.Item>
+          <Descriptions.Item label ="Aeropuerto de destino">{ this.state.destination.name }</Descriptions.Item>
+          <Descriptions.Item label ="Ciudad">{ this.state.destination.city }</Descriptions.Item>
+          <Descriptions.Item label ="Hora de llegada">{ this.state.flight.arrival }</Descriptions.Item>
+          <Descriptions.Item label ="Aerolínea" span = {2}>{ this.state.airline.name }</Descriptions.Item>
+          <Descriptions.Item label ="Modelo del avión">{ this.state.plane.name }</Descriptions.Item>
+          <Descriptions.Item label ="Asientos" span = {3}>{this.createSeats()}</Descriptions.Item>
+        </Descriptions>
       )
     }
   }

@@ -19,6 +19,7 @@ import SearchFlight from "./Components/SearchFlight";
 import TicketHistory from "./Components/TicketHistory";
 import SignUp from "./Components/SignUp";
 import { getAirlines, getAirports, getFavouriteAirport } from "./api";
+import "./App.css";
 
 class App extends React.Component {
   constructor(props) {
@@ -100,7 +101,12 @@ class App extends React.Component {
         key: "logo",
         label: (
           <Link to="/">
-            <img src="/dpiu_airlines/logo.svg" alt="logo" width="40" height="40" />
+            <img
+              src="/dpiu_airlines/logo.svg"
+              alt="logo"
+              width="40"
+              height="40"
+            />
           </Link>
         ),
       },
@@ -141,7 +147,14 @@ class App extends React.Component {
           </Row>
         </Header>
 
-        <Content style={{ padding: "0 50px" }}>
+        <Content
+          style={{
+            padding: "0 50px",
+            width: "100%",
+            maxWidth: "80rem",
+            margin: "auto",
+          }}
+        >
           <Routes>
             <Route
               path="/login"
@@ -192,7 +205,6 @@ class App extends React.Component {
                   supabase={this.supabase}
                   user={this.state.user}
                   callBackOnFinishLoginForm={this.callBackOnFinishLoginForm}
-                  
                 />
               }
             />

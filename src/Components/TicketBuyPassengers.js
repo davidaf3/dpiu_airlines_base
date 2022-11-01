@@ -273,9 +273,9 @@ class TicketBuyPassengers extends React.Component {
       incremented = true
     }
     if (this.state.resaltarAsientosBaratos && !incremented) {
-        return <Tooltip placement="top" title={"Asiento " + numberOfSeat}><Col span={1}><Button type="primary" ghost onClick={() => { this.addTicket(row, column, price) }} style={{ width: "100%" }}>{price + "€"}</Button></Col></Tooltip>
+        return <Tooltip placement="top" title={"Asiento " + numberOfSeat}><Col span={2}><Button type="primary" ghost onClick={() => { this.addTicket(row, column, price) }} style={{ width: "100%" }}>{price + "€"}</Button></Col></Tooltip>
     } else {
-      return <Tooltip placement="top" title={"Asiento " + numberOfSeat}><Col span={1}><Button onClick={() => { this.addTicket(row, column, price) }} style={{ width: "100%" }}>{price + "€"}</Button></Col></Tooltip>
+      return <Tooltip placement="top" title={"Asiento " + numberOfSeat}><Col span={2}><Button onClick={() => { this.addTicket(row, column, price) }} style={{ width: "100%" }}>{price + "€"}</Button></Col></Tooltip>
 
     }
   }
@@ -319,13 +319,13 @@ class TicketBuyPassengers extends React.Component {
       if (reserved == 0) {
         array.push(this.placeSeat(row, i, numberOfSeat))
       } else if (reserved == 1) {
-        array.push(<Tooltip placement="top" title="Ya reservada"><Col span={1}><Button style={{ width: "100%" }} disabled>X</Button></Col></Tooltip>)
+        array.push(<Tooltip placement="top" title="Ya reservada"><Col span={2}><Button style={{ width: "100%" }} disabled>X</Button></Col></Tooltip>)
       } else if (reserved == 2) {
-        array.push(<Tooltip placement="top" title="Ya has reservado este asiento"><Col span={1}><Button style={{ width: "100%" }} disabled>X</Button></Col></Tooltip>)
+        array.push(<Tooltip placement="top" title="Ya has reservado este asiento"><Col span={2}><Button style={{ width: "100%" }} disabled>X</Button></Col></Tooltip>)
       }
 
       if (i == half_length) {
-        array.push(<Col span={1}><Button style={{ width: "100%" }}></Button></Col>)
+        array.push(<Col span={2}><Button style={{ width: "100%" }}></Button></Col>)
       }
       numberOfSeat += 1;
       reserved = 0;
@@ -337,19 +337,19 @@ class TicketBuyPassengers extends React.Component {
     const array = []
     var numberOfSeat = 1
     array.push(<Row style={{ width: "80%", marginBottom: "1em" }}>
-      <Col align="middle" span={1}><Typography.Text>Asientos</Typography.Text></Col>
-      <Col align="middle" span={1}><Typography.Text>A</Typography.Text></Col>
-      <Col align="middle" span={1}><Typography.Text>B</Typography.Text></Col>
-      <Col align="middle" span={1}><Typography.Text>C</Typography.Text></Col>
-      <Col align="middle" span={1}></Col>
-      <Col align="middle" span={1}><Typography.Text>D</Typography.Text></Col>
-      <Col align="middle" span={1}><Typography.Text>E</Typography.Text></Col>
-      <Col align="middle" span={1}><Typography.Text>F</Typography.Text></Col>
+      <Col align="middle" span={2}><Typography.Text>Asientos</Typography.Text></Col>
+      <Col align="middle" span={2}><Typography.Text>A</Typography.Text></Col>
+      <Col align="middle" span={2}><Typography.Text>B</Typography.Text></Col>
+      <Col align="middle" span={2}><Typography.Text>C</Typography.Text></Col>
+      <Col align="middle" span={2}></Col>
+      <Col align="middle" span={2}><Typography.Text>D</Typography.Text></Col>
+      <Col align="middle" span={2}><Typography.Text>E</Typography.Text></Col>
+      <Col align="middle" span={2}><Typography.Text>F</Typography.Text></Col>
     </Row>);
 
 
     for (var i = 1; i <= this.state.plane.rows; i++) {
-      array.push(<Row style={{ width: "80%", marginBottom: "1em" }}><Col align="middle" span={1}><Typography.Text>{i}</Typography.Text></Col>{this.createRowSeat(i, numberOfSeat)}</Row>);
+      array.push(<Row style={{ width: "80%", marginBottom: "1em" }}><Col align="middle" span={2}><Typography.Text>{i}</Typography.Text></Col>{this.createRowSeat(i, numberOfSeat)}</Row>);
       if (!this.hayquehacervuelta) {
         numberOfSeat += this.state.plane.columns
       }
