@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import FlightCard from "./FlightCard";
-import { List, Row, Col, Typography, Drawer, Button } from "antd";
+import { List, Row, Col, Typography, Drawer, Button, Badge } from "antd";
 import { FilterOutlined } from "@ant-design/icons";
 import RoundTripCard from "./RoundTripCard";
 import SortDropdown from "./SortDropdown";
@@ -19,6 +19,8 @@ export default function SearchResults({
 
   const minMaxHours = useRef({});
   const availabelAirlines = useRef([]);
+  const shortest = useRef({});
+  const cheapest = useRef([]);
 
   const filters = useRef(null);
   const applyFilters = (newFilters) => {
@@ -39,17 +41,20 @@ export default function SearchResults({
       setLoading(true);
 
       const searchFn = search.roundTrip ? searchRoundTrip : searchSingleFlight;
-      const [newResults, newAvailableAirlines, newMinMaxHours] = await searchFn(
-        supabase,
-        search,
-        order.current,
-        filters.current
-      );
+      const [
+        newResults,
+        newAvailableAirlines,
+        newMinMaxHours,
+        newCheapest,
+        newShortest,
+      ] = await searchFn(supabase, search, order.current, filters.current);
 
       setLoading(false);
       setResults(newResults);
       minMaxHours.current = newMinMaxHours;
       availabelAirlines.current = newAvailableAirlines;
+      shortest.current = newShortest?.duration;
+      cheapest.current = newCheapest?.base_price;
     },
     [supabase]
   );
@@ -69,12 +74,59 @@ export default function SearchResults({
     }
   }, [search, fetchResults]);
 
+  const renderResult = (result) => {
+    const key = result.return
+      ? result.departure.code + result.return.code
+      : result.code;
+    const item = result.return ? (
+      <List.Item key={result.departure.code + result.return.code}>
+        <RoundTripCard
+          trip={result}
+          airports={airports}
+          airlines={airlines}
+          passengers={search.passengers}
+        ></RoundTripCard>
+      </List.Item>
+    ) : (
+      <List.Item key={result.code}>
+        <FlightCard
+          flight={result}
+          airports={airports}
+          airlines={airlines}
+          passengers={search.passengers}
+          showSelect={true}
+        ></FlightCard>
+      </List.Item>
+    );
+
+    let badge = null;
+
+    if (
+      result.duration === shortest.current &&
+      result.base_price === cheapest.current
+    ) {
+      badge = { text: "El mejor", color: "gold" };
+    } else if (result.base_price === cheapest.current) {
+      badge = { text: "El más barato", color: "orange" };
+    } else if (result.duration === shortest.current) {
+      badge = { text: "El más corto", color: "cyan" };
+    }
+
+    return badge ? (
+      <Badge.Ribbon key={key} {...badge}>
+        {item}
+      </Badge.Ribbon>
+    ) : (
+      item
+    );
+  };
+
   const { Text } = Typography;
 
   return (
     <div>
       <List
-        style={{backgroundColor: "white"}}
+        style={{ backgroundColor: "white" }}
         loading={loading}
         bordered={true}
         dataSource={results}
@@ -109,28 +161,7 @@ export default function SearchResults({
             </Col>
           </Row>
         }
-        renderItem={(result) =>
-          result.return ? (
-            <List.Item>
-              <RoundTripCard
-                trip={result}
-                airports={airports}
-                airlines={airlines}
-                passengers={search.passengers}
-              ></RoundTripCard>
-            </List.Item>
-          ) : (
-            <List.Item key={result.code}>
-              <FlightCard
-                flight={result}
-                airports={airports}
-                airlines={airlines}
-                passengers={search.passengers}
-                showSelect={true}
-              ></FlightCard>
-            </List.Item>
-          )
-        }
+        renderItem={renderResult}
       ></List>
       <Drawer
         open={filtersOpen}

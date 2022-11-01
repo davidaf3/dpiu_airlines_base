@@ -167,10 +167,22 @@ export async function searchSingleFlight(supabase, search, order, filters) {
     order.col,
     { ascending: order.asc }
   );
+  const cheapestQuery = singleFlightQuery(supabase, args, search, null)
+    .order("base_price", { ascending: true })
+    .limit(1);
+  const shortestQuery = singleFlightQuery(supabase, args, search, null)
+    .order("duration", { ascending: true })
+    .limit(1);
   let airportsQuery = supabase.rpc("get_distinct_airline_single_flight", args);
   let hoursQuery = supabase.rpc("get_min_max_hours_single_flight", args);
 
-  let responses = await Promise.all([flightsQuery, airportsQuery, hoursQuery]);
+  let responses = await Promise.all([
+    flightsQuery,
+    airportsQuery,
+    hoursQuery,
+    cheapestQuery,
+    shortestQuery,
+  ]);
   responses = responses.map((response) => response.data);
 
   responses[1] = responses[1].map((el) => el.airline);
@@ -181,6 +193,9 @@ export async function searchSingleFlight(supabase, search, order, filters) {
     max: moment(hours.max).get("hour") + 1,
   };
 
+  responses[3] = responses[3][0];
+  responses[4] = responses[4][0];
+
   return responses;
 }
 
@@ -190,10 +205,22 @@ export async function searchRoundTrip(supabase, search, order, filters) {
     order.col,
     { ascending: order.asc }
   );
+  const cheapestQuery = roundTripQuery(supabase, args, search, null)
+    .order("base_price", { ascending: true })
+    .limit(1);
+  const shortestQuery = roundTripQuery(supabase, args, search, null)
+    .order("duration", { ascending: true })
+    .limit(1);
   let airportsQuery = supabase.rpc("get_distinct_airline_round_trip", args);
   let hoursQuery = supabase.rpc("get_min_max_hours_round_trip", args);
 
-  let responses = await Promise.all([flightsQuery, airportsQuery, hoursQuery]);
+  let responses = await Promise.all([
+    flightsQuery,
+    airportsQuery,
+    hoursQuery,
+    cheapestQuery,
+    shortestQuery,
+  ]);
   responses = responses.map((response) => response.data);
 
   responses[0] = responses[0].map((result) => {
@@ -227,6 +254,9 @@ export async function searchRoundTrip(supabase, search, order, filters) {
       max: moment(hours.return_max).get("hour") + 1,
     },
   };
+
+  responses[3] = responses[3][0];
+  responses[4] = responses[4][0];
 
   return responses;
 }

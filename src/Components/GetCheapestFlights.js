@@ -18,7 +18,7 @@ class GetCheapestFlights extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.user?.id !== this.props.user?.id) {
+    if (prevProps.user?.airport !== this.props.user?.airport) {
       this.chooseFavouriteAirport();
     }
   }

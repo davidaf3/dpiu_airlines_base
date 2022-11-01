@@ -94,6 +94,15 @@ class App extends React.Component {
     }
   };
 
+  onChangeFavouriteAirport(newFavouriteAirport) {
+    this.setState({
+      user: {
+        ...this.state.user,
+        airport: newFavouriteAirport,
+      },
+    });
+  }
+
   render() {
     const { Header, Content } = Layout;
 
@@ -187,6 +196,9 @@ class App extends React.Component {
                   supabase={this.supabase}
                   airports={this.state.airports}
                   user={this.state.user}
+                  onChangeFavouriteAirport={this.onChangeFavouriteAirport.bind(
+                    this
+                  )}
                 />
               }
             />

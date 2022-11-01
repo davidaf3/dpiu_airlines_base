@@ -84,19 +84,17 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
 
   useEffect(() => {
     if (!user) return;
-    getTicketHistory(supabase, user.id).then(
-      (newHistory) => {
-        setHistory(newHistory);
-        updateFilter(
-          flightFilter,
-          newHistory,
-          (flight) => flight.code,
-          (code) => ({ text: code, value: code })
-        );
-        if (newHistory.length > 0) setExpandedRows([newHistory[0].key]);
-        setLoading(false);
-      }
-    );
+    getTicketHistory(supabase, user.id).then((newHistory) => {
+      setHistory(newHistory);
+      updateFilter(
+        flightFilter,
+        newHistory,
+        (flight) => flight.code,
+        (code) => ({ text: code, value: code })
+      );
+      if (newHistory.length > 0) setExpandedRows([newHistory[0].key]);
+      setLoading(false);
+    });
   }, [supabase, user]);
 
   useEffect(() => {
@@ -142,6 +140,13 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
       render: (date) => date.format(dateTimeFormat),
       sorter: (f1, f2) => f1.buyDate.diff(f2.buyDate),
       defaultSortOrder: "descend",
+    },
+    {
+      title: "Pasajeros",
+      dataIndex: ["tickets", "length"],
+      key: "ticketNumber",
+      sorter: (f1, f2) => f1.tickets.length - f2.tickets.length,
+      align: "right",
     },
     {
       title: "Vuelo",
@@ -301,10 +306,7 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
         </Col>
         <Col span={3}>
           {flight.tickets.map((ticket) => (
-            <Row
-              key={"seat" + ticket.id}
-              className="detailValue"
-            >
+            <Row key={"seat" + ticket.id} className="detailValue">
               {String.fromCharCode(ticket.row + 65)}
               {ticket.column}
             </Row>

@@ -6,7 +6,7 @@ import { serializeSearch } from "../searchSerialization";
 import ChangeFavouriteAirport from "./ChangeFavouriteAirport";
 import { Divider, Typography, Row } from "antd";
 
-export default function Home({ supabase, airports, user }) {
+export default function Home({ supabase, airports, user, onChangeFavouriteAirport }) {
   const navigate = useNavigate();
 
   const searchFlights = (search) => {
@@ -18,10 +18,9 @@ export default function Home({ supabase, airports, user }) {
 
   const showFavouriteAirport = () => {
     let array = []
-    console.log({user})
     if ({user} != null) {
       array.push(<Divider><Typography.Text>Selecciona tu aeropuerto favorito y te quedará guardado</Typography.Text></Divider>)
-      array.push(<Row justify="center"><ChangeFavouriteAirport supabase={supabase} airports={airports} user={user} /></Row>)
+      array.push(<Row justify="center"><ChangeFavouriteAirport onChange={onChangeFavouriteAirport} supabase={supabase} airports={airports} user={user} /></Row>)
     }
     return array
   };

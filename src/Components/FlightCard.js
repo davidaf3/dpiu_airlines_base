@@ -25,7 +25,7 @@ export default function FlightCard({
   const { Title, Text, Link } = Typography;
 
   return (
-    <Row style={{ width: "100%" }}>
+    <Row style={{ width: "100%",  padding: showSelect ? "2em 0" : "0", }}>
       <Col>
         <Row gutter={16}>
           {airline ? (
@@ -49,7 +49,7 @@ export default function FlightCard({
           <Col style={{ marginLeft: "1em", paddingRight: "0" }}>
             <Row>
               <Col>
-                <Row style={{ marginBottom: ".3em" }}>&nbsp;</Row>
+                <Row style={{ marginBottom: ".5em" }}>&nbsp;</Row>
                 <Row>
                   <Title level={4}>{departure.format("HH:mm")}</Title>
                 </Row>
@@ -62,13 +62,13 @@ export default function FlightCard({
                   alignItems: "center",
                 }}
               >
-                <Row style={{ marginBottom: ".3em" }}>
+                <Row style={{ marginBottom: ".5em" }}>
                   {hh !== "00" && hh.replace(/^0+/, "") + " h"}{" "}
                   {mm !== "00" && mm.replace(/^0+/, "") + " min"}
                 </Row>
                 <Row>
                   <ArrowRightOutlined
-                    style={{ fontSize: "1.2em", marginBottom: "0.5em" }}
+                    style={{ fontSize: "1.2em", marginBottom: ".5em" }}
                   />
                 </Row>
               </Col>
@@ -78,7 +78,7 @@ export default function FlightCard({
             </Row>
           </Col>
           <Col style={{ paddingLeft: "0" }}>
-            <Row style={{ marginBottom: ".3em" }}>&nbsp;</Row>
+            <Row style={{ marginBottom: ".5em" }}>&nbsp;</Row>
             <Row>
               <Title level={4}>{arrival.format("HH:mm")}</Title>
             </Row>

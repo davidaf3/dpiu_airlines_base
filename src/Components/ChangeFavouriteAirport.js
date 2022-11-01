@@ -2,11 +2,11 @@ import { Form, Row, Button, Col, notification } from "antd";
 import AirportSelect from "./AirportSelect";
 import { useEffect, useRef } from "react";
 
-export default function ChangeFavouriteAirport({ supabase, airports, user }) {
+export default function ChangeFavouriteAirport({ supabase, airports, user, onChange }) {
   const formRef = useRef(null);
 
   const updateFavouriteAirport = async (values) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("user")
       .update({ airport: values.fav })
       .eq("id", user.id);
@@ -16,10 +16,8 @@ export default function ChangeFavouriteAirport({ supabase, airports, user }) {
         message: "Se ha actualizado el aeropuerto favorito",
         description:
           "Ahora este aeropuerto será el que te aparezca por defecto como aeropuerto de origen",
-        onClick: () => {
-          console.log("Notification Clicked!");
-        },
       });
+      onChange(values.fav);
     }
   };
 
