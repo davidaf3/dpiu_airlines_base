@@ -652,14 +652,13 @@ getContentAccordingToProgress() {
 }
 
 doCallback(loginUser) {
-  this.props.callBackOnFinishLoginForm(loginUser);
-  debugger
-  this.closeModal();
+  return this.props.callBackOnFinishLoginForm(loginUser)
+    .then(this.closeModal.bind(this));
 }
 
-  closeModal() {
-    this.setState({ isModalOpen: false })
-  }
+closeModal() {
+  this.setState({ isModalOpen: false })
+}
 
 
 comprarTickets() {
