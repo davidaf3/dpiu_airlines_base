@@ -10,13 +10,27 @@ class GetCheapestFlights extends React.Component {
     super(props)
     this.state = {
       flights: {},
-      airports: {},
+      airports: [],
       chosen: undefined,
       name: "Todos los aeropuertos",
     }
     this.getAirports();
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.user?.id !== this.props.user?.id) {
+      this.chooseFavouriteAirport();
+    }
+  }
+
+  chooseFavouriteAirport() {
+    if (this.props.user?.airport) {
+      const idx = this.state.airports.findIndex(
+        (airport) => airport.code === this.props.user.airport
+      );
+      if (idx !== -1) this.updateChosen({key: idx});
+    }
+  }
 
   getCheapestFlights = async () => {
     if (this.state.chosen == undefined) {
@@ -52,6 +66,7 @@ class GetCheapestFlights extends React.Component {
       this.setState({
         airports: data
       }, () => {
+        this.chooseFavouriteAirport();
         this.getCheapestFlights();
       }
       )
