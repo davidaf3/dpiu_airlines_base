@@ -244,24 +244,7 @@ export async function searchRoundTripAndMetadata(
   ]);
   responses = responses.map((response) => response.data);
 
-  responses[0] = responses[0].map((result) => {
-    const trip = {
-      departure: {},
-      return: {},
-      base_price: result.base_price,
-      duration: result.duration,
-    };
-
-    Object.keys(result).forEach((key) => {
-      if (key.startsWith("departure"))
-        trip.departure[key.replace("departure_", "")] = result[key];
-      else if (key.startsWith("return"))
-        trip.return[key.replace("return_", "")] = result[key];
-    });
-
-    return trip;
-  });
-
+  responses[0] = responses[0].map(resoltToRoundTrip);
   responses[1] = responses[1].map((el) => el.airline);
 
   const hours = responses[2];
@@ -288,24 +271,24 @@ export async function searchRoundTrip(supabase, search, order, filters) {
     order.col,
     { ascending: order.asc }
   );
+  const flights = data.map(resoltToRoundTrip);
+  return flights;
+}
 
-  const flights = data.map((result) => {
-    const trip = {
-      departure: {},
-      return: {},
-      base_price: result.base_price,
-      duration: result.duration,
-    };
+function resoltToRoundTrip(result) {
+  const trip = {
+    departure: {},
+    return: {},
+    base_price: result.base_price,
+    duration: result.duration,
+  };
 
-    Object.keys(result).forEach((key) => {
-      if (key.startsWith("departure"))
-        trip.departure[key.replace("departure_", "")] = result[key];
-      else if (key.startsWith("return"))
-        trip.return[key.replace("return_", "")] = result[key];
-    });
-
-    return trip;
+  Object.keys(result).forEach((key) => {
+    if (key.startsWith("departure"))
+      trip.departure[key.replace("departure_", "")] = result[key];
+    else if (key.startsWith("return"))
+      trip.return[key.replace("return_", "")] = result[key];
   });
 
-  return flights;
+  return trip;
 }

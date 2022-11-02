@@ -307,8 +307,8 @@ export default function TicketHistory({ supabase, airports, airlines, user }) {
         <Col span={3}>
           {flight.tickets.map((ticket) => (
             <Row key={"seat" + ticket.id} className="detailValue">
-              {String.fromCharCode(ticket.row + 65)}
-              {ticket.column}
+              {ticket.row}
+              {String.fromCharCode(ticket.column + 64)}
             </Row>
           ))}
         </Col>
