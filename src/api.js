@@ -161,7 +161,12 @@ function roundTripQuery(supabase, args, search, filters) {
   return query;
 }
 
-export async function searchSingleFlight(supabase, search, order, filters) {
+export async function searchSingleFlightAndMetadata(
+  supabase,
+  search,
+  order,
+  filters
+) {
   const args = searchToSingleFlightQueryArgs(search);
   const flightsQuery = singleFlightQuery(supabase, args, search, filters).order(
     order.col,
@@ -199,7 +204,23 @@ export async function searchSingleFlight(supabase, search, order, filters) {
   return responses;
 }
 
-export async function searchRoundTrip(supabase, search, order, filters) {
+export async function searchSingleFlight(supabase, search, order, filters) {
+  const args = searchToSingleFlightQueryArgs(search);
+  const { data } = await singleFlightQuery(
+    supabase,
+    args,
+    search,
+    filters
+  ).order(order.col, { ascending: order.asc });
+  return data;
+}
+
+export async function searchRoundTripAndMetadata(
+  supabase,
+  search,
+  order,
+  filters
+) {
   const args = searchToRoundTripQueryArgs(search);
   const flightsQuery = roundTripQuery(supabase, args, search, filters).order(
     order.col,
@@ -259,4 +280,32 @@ export async function searchRoundTrip(supabase, search, order, filters) {
   responses[4] = responses[4][0];
 
   return responses;
+}
+
+export async function searchRoundTrip(supabase, search, order, filters) {
+  const args = searchToRoundTripQueryArgs(search);
+  const { data } = await roundTripQuery(supabase, args, search, filters).order(
+    order.col,
+    { ascending: order.asc }
+  );
+
+  const flights = data.map((result) => {
+    const trip = {
+      departure: {},
+      return: {},
+      base_price: result.base_price,
+      duration: result.duration,
+    };
+
+    Object.keys(result).forEach((key) => {
+      if (key.startsWith("departure"))
+        trip.departure[key.replace("departure_", "")] = result[key];
+      else if (key.startsWith("return"))
+        trip.return[key.replace("return_", "")] = result[key];
+    });
+
+    return trip;
+  });
+
+  return flights;
 }

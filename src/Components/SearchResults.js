@@ -5,7 +5,12 @@ import { FilterOutlined } from "@ant-design/icons";
 import RoundTripCard from "./RoundTripCard";
 import SortDropdown from "./SortDropdown";
 import SearchFilters from "./SearchFilters";
-import { searchSingleFlight, searchRoundTrip } from "../api";
+import {
+  searchSingleFlight,
+  searchRoundTrip,
+  searchSingleFlightAndMetadata,
+  searchRoundTripAndMetadata,
+} from "../api";
 
 export default function SearchResults({
   supabase,
@@ -41,6 +46,26 @@ export default function SearchResults({
       setLoading(true);
 
       const searchFn = search.roundTrip ? searchRoundTrip : searchSingleFlight;
+      const newResults = await searchFn(
+        supabase,
+        search,
+        order.current,
+        filters.current
+      );
+
+      setLoading(false);
+      setResults(newResults);
+    },
+    [supabase]
+  );
+
+  const fetchResultsAndMetadata = useCallback(
+    async (search) => {
+      setLoading(true);
+
+      const searchFn = search.roundTrip
+        ? searchRoundTripAndMetadata
+        : searchSingleFlightAndMetadata;
       const [
         newResults,
         newAvailableAirlines,
@@ -70,9 +95,9 @@ export default function SearchResults({
   useEffect(() => {
     if (search) {
       filters.current = null;
-      fetchResults(search).then(resetFilters);
+      fetchResultsAndMetadata(search).then(resetFilters);
     }
-  }, [search, fetchResults]);
+  }, [search, fetchResultsAndMetadata]);
 
   const renderResult = (result) => {
     const key = result.return
